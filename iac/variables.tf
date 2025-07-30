@@ -1,8 +1,3 @@
-variable "environment" {
-  type        = string
-  description = "Environment name"
-}
-
 variable "region" {
   type        = string
   description = "Region"
@@ -30,11 +25,6 @@ variable "public_acm_certificate_arn" {
   type        = string
 }
 
-variable "public_acm_certificate_arn_global" {
-  description = "ARN of the Global Public ACM Certificate"
-  type        = string  
-}
-
 ## COMMON API GW ##
 variable "apigw_stage_name" {
   type        = string
@@ -54,11 +44,6 @@ variable "public_vpc_link_name" {
 }
 
 ##################### VPC AND SUBNETS #####################
-variable "vpces" {
-  type        = list(string)
-  description = "List of VPC Endpoints"
-}
-
 variable "subnets" {
   type        = list(string)
   description = "List of subnet IDs"
@@ -69,24 +54,14 @@ variable "vpc_id" {
   description = "VPC ID"
 }
 
-variable "private_ips" {
-  type        = string
-  description = "Private IPS"
-}
-
 variable "vpc_s3_gateway_endpoint_id" {
   description = "Id of the s3 gateway endpoint"
   type        = string
 }
 
-variable "vpc_api_interface_endpoint_ips" {
-  description = "Ips of the  api interface endpoint"
-  type        = list(string)
-}
-
 
 ##################### NLB #####################
-## orchestrator ai NLB ##
+## OCHESTRATOR AI NLB ##
 variable "orchestrator_nlb_name" {
   description = "orchestrator ai NLB name"
   type        = string
@@ -140,13 +115,8 @@ variable "kms_key_arn" {
   type        = string
 }
 
-## orchestrator ai ECS ##
-variable "private_ecs_task_definition_name" {
-  type        = string
-  description = "Name of the private ECS task definition"
-}
-
-variable "orchestrator_ecs_task_definition_name" {
+## ORCHESTRATOR AI ECS ##
+variable "orchestrator_ai_ecs_task_definition_name" {
   type        = string
   description = "Name of the orchestrator ai ECS task definition"
 }
@@ -166,7 +136,7 @@ variable "orchestrator_ecs_service_name" {
   description = "Name of the orchestrator ai ECS service"
 }
 
-## modelAi1 ECS ##
+## MODEL AI 1 ECS ##
 
 variable "modelAi1_ecs_task_definition_name" {
   type        = string
@@ -188,7 +158,7 @@ variable "modelAi1_ecs_service_name" {
   description = "Name of the modelAi1 ECS service"
 }
 
-## modelAi2 ECS ##
+## MODEL AI 2 ECS ##
 
 variable "modelAi2_ecs_task_definition_name" {
   type        = string
@@ -210,7 +180,7 @@ variable "modelAi2_ecs_service_name" {
   description = "Name of the modelAi2 ECS service"
 }
 
-## modelAi3 ECS ##
+## MODEL AI 3 ECS ##
 
 variable "modelAi3_ecs_task_definition_name" {
   type        = string
@@ -233,12 +203,12 @@ variable "modelAi3_ecs_service_name" {
 }
 
 ############### WAF ACL ############################
-variable "waf_apigateway_name" {
+variable "waf_apigw_name" {
   type        = string
   description = "Name of the WAF S3 Log Bucket"
 }
 
-variable "waf_apigateway_s3_log_bucket_name" {
+variable "waf_apigw_s3_log_bucket_name" {
   type        = string
   description = "Name of the WAF S3 Log Bucket"
 }

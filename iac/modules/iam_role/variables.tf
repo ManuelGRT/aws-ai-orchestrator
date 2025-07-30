@@ -9,7 +9,7 @@ variable "task_execution_role_name" {
 ########################
 # IAM ROLE ECS TASK ROLE
 ########################
-variable "private_ecs_task_definition_name" {
+variable "orchestrator_ecs_task_definition_name" {
   type        = string
   description = "Name of the private ECS task definition"
 }

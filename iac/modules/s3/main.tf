@@ -1,3 +1,6 @@
+data "aws_canonical_user_id" "current" {}
+# data "aws_cloudfront_log_delivery_canonical_user_id" "cloudfront" {}
+
 ##################
 # S3 IMAGES BUCKET
 ##################
@@ -10,13 +13,6 @@ resource "aws_s3_bucket_versioning" "images_bucket_versioning" {
   versioning_configuration {
     status = "Enabled"
   }
-}
-
-resource "aws_s3_bucket_logging" "images_bucket_logging" {
-  bucket = aws_s3_bucket.images_bucket.id
-
-  target_bucket = aws_s3_bucket.central_log_bucket.id
-  target_prefix = var.s3_image_bucket_name
 }
 
 resource "aws_s3_bucket_public_access_block" "images_bucket_block_public_access" {
@@ -49,15 +45,16 @@ resource "aws_s3_bucket_policy" "images_bucket_policy" {
           Bool = {
             "aws:SecureTransport" = "false"
           }
-          StringNotEquals = {
+          /*StringNotEquals = {
             "aws:SourceVpce": var.vpc_s3_gateway_endpoint_id
-          }
+          }*/
         }
       }
     ]
   })
 }
 
+/*
 resource "aws_s3_bucket_server_side_encryption_configuration" "images_bucket_encryption" {
   bucket = aws_s3_bucket.images_bucket.id
 
@@ -70,6 +67,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "images_bucket_enc
     bucket_key_enabled = false
   }
 }
+*/
 
 resource "aws_s3_bucket_lifecycle_configuration" "images_bucket_lifecycle" {
   bucket = aws_s3_bucket.images_bucket.id
@@ -103,13 +101,6 @@ resource "aws_s3_bucket_versioning" "waf_apigateway_s3_log_bucket" {
   versioning_configuration {
     status = "Enabled"
   }
-}
-
-resource "aws_s3_bucket_logging" "waf_apigateway_s3_log_bucket_logging" {
-  bucket = aws_s3_bucket.waf_apigateway_s3_log_bucket.id
-
-  target_bucket = aws_s3_bucket.central_log_bucket.id
-  target_prefix = var.s3_apigw_waf_log_bucket_name
 }
 
 resource "aws_s3_bucket_policy" "waf_apigateway_logs_policy" {

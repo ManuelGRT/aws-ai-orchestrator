@@ -182,6 +182,7 @@ resource "aws_api_gateway_method_settings" "public_all" {
   }
 }
 
+/*
 resource "aws_api_gateway_domain_name" "public_custom_domain_name" {
   domain_name = var.public_apigateway_custom_domain_name
 
@@ -199,3 +200,4 @@ resource "aws_api_gateway_base_path_mapping" "public_api_mapping" {
   api_id = aws_api_gateway_rest_api.public_api.id
   stage_name  = var.apigw_stage_name
 }
+*/

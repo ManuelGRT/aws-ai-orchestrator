@@ -84,7 +84,7 @@ variable "modelAi2_ecs_service_name" {
   description = "Name of the modelAi2 ECS service"
 }
 
-## KITT AI ECS ##
+## MODEL 3 AI ECS ##
 
 variable "modelAi3_container_image_url" {
   description = "The URL of the modelAi3 ECR repository"
@@ -152,17 +152,7 @@ variable "kms_key_arn" {
   type        = string
 }
 
-variable "private_ips" {
-  type        = string
-  description = "Private IPS"
-}
-
 ### SECRET MANAGER ###
-variable "public_api_secret_arn" {
-  description = "ARN of the Public Api Secret"
-  type        = string
-}
-
 variable "orchestratorAi_api_secret_arn" {
   description = "ARN of the orchestratorAi Api Secret"
   type        = string

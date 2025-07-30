@@ -14,6 +14,63 @@ resource "aws_ecs_cluster" "cluster" {
   }
 }
 
+# Security Group for ECS Tasks
+resource "aws_security_group" "ecs_tasks_sg" {
+  name        = var.ecs_security_group_name
+  description = "Allow inbound traffic for ECS tasks"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["172.31.16.0/20"] # TODO: CAMBIAR
+    description = "Allow from NLBs"
+  }
+
+  ingress {
+    from_port   = -1
+    to_port     = -1
+    protocol    = "icmp"
+    self        = true
+    description = "Intracluster connectivity ICMP"
+  }
+
+  ingress {
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "tcp"
+    self        = true
+    description = "Intracluster connectivity TCP"
+  }
+
+  ingress {
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "udp"
+    self        = true
+    description = "Intracluster connectivity UDP"
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
 #### ORCHESTRATOR AI ECS ####
 
 # ECS Task Definition
@@ -92,10 +149,10 @@ resource "aws_ecs_service" "orchestrator_api_ecs_service" {
 
     service {
       port_name = "http"
-      discovery_name = "orchestratorAi-api"
+      discovery_name = "orchestratorai-api"
       client_alias {
         port     = 80
-        dns_name = "orchestratorAi-api"
+        dns_name = "orchestratorai-api"
       }
     }
   }
@@ -166,10 +223,10 @@ resource "aws_ecs_service" "modelAi1_api_ecs_service" {
 
     service {
       port_name = "http"
-      discovery_name = "modelAi1-api"
+      discovery_name = "modelai1-api"
       client_alias {
         port     = 80
-        dns_name = "modelAi1-api"
+        dns_name = "modelai1-api"
       }
     }
   }
@@ -240,10 +297,10 @@ resource "aws_ecs_service" "modelAi2_api_ecs_service" {
 
     service {
       port_name = "http"
-      discovery_name = "modelAi2-api"
+      discovery_name = "modelai2-api"
       client_alias {
         port     = 80
-        dns_name = "modelAi2-api"
+        dns_name = "modelai2-api"
       }
     }
   }
@@ -314,10 +371,10 @@ resource "aws_ecs_service" "modelAi3_api_ecs_service" {
 
     service {
       port_name = "http"
-      discovery_name = "kitt-api"
+      discovery_name = "modelai3-api"
       client_alias {
         port     = 80
-        dns_name = "kitt-api"
+        dns_name = "modelai3-api"
       }
     }
   }

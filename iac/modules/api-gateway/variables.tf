@@ -33,11 +33,6 @@ variable "public_vpc_link_name" {
   type        = string
 }
 
-variable "vpces" {
-  description = "vpcs ids"
-  type        = list(string)
-}
-
 variable "public_cognito_user_pool_arn" {
   description = "ARN of the cognito usar pool"
   type        = string

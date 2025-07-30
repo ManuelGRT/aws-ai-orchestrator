@@ -1,7 +1,7 @@
 #####################
 # WAF ACL API GATEWAY
 #####################
-variable "waf_apigateway_name" {
+variable "waf_apigw_name" {
   description = "Name of the Public Api Gateway WAF ACL"
   type        = string
 }

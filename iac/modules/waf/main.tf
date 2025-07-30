@@ -2,7 +2,7 @@
 # WAF ACL PUBLIC API GATEWAY
 ############################
 resource "aws_wafv2_web_acl" "api_gateway_waf" {
-  name        = var.waf_apigateway_name
+  name        = var.waf_apigw_name
   description = "WAF for Public API on API Gateway Edge Optimized"
   scope       = "REGIONAL"
 

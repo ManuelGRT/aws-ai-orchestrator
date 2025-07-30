@@ -1,9 +1,8 @@
 terraform {
   backend "s3" {
     encrypt                 = true
-    dynamodb_table          = "aws-tfstate"
-    bucket                  = "aws-tfstate"
-    key                     = ""
+    bucket                  = "aws-ai-orchestrator-tfstate"
+    key                     = "terraform.tfsate"
     region                  = "eu-west-1"
     shared_credentials_file = "~/.aws/credentials"
   }
@@ -34,11 +33,10 @@ module "api-gateway" {
   public_cognito_user_pool_arn = module.cognito.cognito_user_pool_arn
   public_cognito_user_pool_id = module.cognito.cognito_user_pool_id
   public_apigateway_custom_domain_name = var.public_apigateway_custom_domain_name
-  public_acm_certificate_arn = var.public_acm_certificate_arn_global
+  public_acm_certificate_arn = var.public_acm_certificate_arn
 
   apigw_stage_name = var.apigw_stage_name
   apigw_logging_level = var.apigw_logging_level
-  vpces = var.vpces
 }
 
 module "nlb" {
@@ -63,7 +61,7 @@ module "ecr" {
 module "ecs" {
   source = "./modules/ecs"
 
-  orchestrator_container_image_url = module.ecr.ecr_orchestrator_repository_url
+  orchestrator_container_image_url = module.ecr.ecr_orchestratorAi_repository_url
   modelAi1_container_image_url = module.ecr.ecr_modelAi1_repository_url
   modelAi2_container_image_url = module.ecr.ecr_modelAi2_repository_url
   modelAi3_container_image_url = module.ecr.ecr_modelAi3_repository_url
@@ -74,14 +72,13 @@ module "ecs" {
   ecs_security_group_name = var.ecs_security_group_name
   subnets = var.subnets
   vpc_id = var.vpc_id
-  private_ips = var.private_ips
   cloudmap_namespace = var.cloudmap_namespace
   kms_key_arn = var.kms_key_arn
 
   private_ecs_task_role_arn = module.iam_role.private_ecs_task_role_arn
   task_execution_role_arn = module.iam_role.task_execution_role_arn
 
-  orchestrator_ecs_task_definition_name = var.orchestrator_ecs_task_definition_name
+  orchestrator_ecs_task_definition_name = var.orchestrator_ai_ecs_task_definition_name
   orchestrator_ecs_task_cpu = var.orchestrator_ecs_task_cpu
   orchestrator_ecs_task_memory = var.orchestrator_ecs_task_memory
   orchestrator_ecs_service_name = var.orchestrator_ecs_service_name
@@ -101,7 +98,6 @@ module "ecs" {
   modelAi3_ecs_task_memory = var.modelAi3_ecs_task_memory
   modelAi3_ecs_service_name = var.modelAi3_ecs_service_name
 
-  public_api_secret_arn = module.secrets_manager.public_api_secret_arn
   orchestratorAi_api_secret_arn = module.secrets_manager.orchestratorAi_api_secret_arn
 }
 
@@ -110,11 +106,12 @@ module "waf_acl" {
 
 
   # Public Api-Gateway WAF ACL
-  waf_apigateway_name = var.waf_apigateway_name
+  waf_apigw_name = var.waf_apigw_name
   apigateway_stage_arn = module.api-gateway.public_api_stage_arn
   s3_apigw_waf_bucket_arn = module.s3_bucket.s3_apigw_waf_bucket_arn
 }
 
+/*
 module "hosted_zone" {
   source = "./modules/route53"
 
@@ -127,13 +124,14 @@ module "hosted_zone" {
   nlb_dns_name = module.nlb.nlb_private_apigateway_dns_name
   nlb_zone_id = module.nlb.nlb_private_apigateway_zone_id
 }
+*/
 
 module "iam_role" {
   source = "./modules/iam_role"
 
   kms_key_arn = var.kms_key_arn
 
-  private_ecs_task_definition_name = var.private_ecs_task_definition_name
+  orchestrator_ecs_task_definition_name = var.orchestrator_ai_ecs_task_definition_name
   task_execution_role_name = var.task_execution_role_name
 
   s3_image_bucket_arn = module.s3_bucket.s3_images_bucket_arn
@@ -147,7 +145,7 @@ module "s3_bucket" {
   kms_key_arn = var.kms_key_arn
   vpc_s3_gateway_endpoint_id = var.vpc_s3_gateway_endpoint_id
 
-  s3_apigw_waf_log_bucket_name = var.waf_apigateway_s3_log_bucket_name
+  s3_apigw_waf_log_bucket_name = var.waf_apigw_s3_log_bucket_name
 }
 
 module "secrets_manager" {

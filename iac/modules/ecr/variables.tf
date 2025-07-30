@@ -9,11 +9,11 @@ variable "ecr_modelAi1_repository_name" {
 }
 
 variable "ecr_modelAi2_repository_name" {
-  description = "ECR modelAi1 repository name"
+  description = "ECR modelAi2 repository name"
   type        = string
 }
 
 variable "ecr_modelAi3_repository_name" {
-  description = "ECR Kitt AI repository name"
+  description = "ECR modelAi3 repository name"
   type        = string
 }
