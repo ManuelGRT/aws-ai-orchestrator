@@ -153,3 +153,10 @@ module "secrets_manager" {
 
   secret_orchestratorAi_api_name = var.secret_orchestratorAi_api_name
 }
+module "dynamo_db" {
+  source        = "./modules/dynamodb"
+
+  table_name    = var.dynamo_table_name
+  hash_key      = var.dynamo_hash_key
+  hash_key_type = var.dynamo_hash_key_type
+}

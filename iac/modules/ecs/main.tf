@@ -21,6 +21,13 @@ resource "aws_security_group" "ecs_tasks_sg" {
   vpc_id      = var.vpc_id
 
   ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
@@ -134,6 +141,7 @@ resource "aws_ecs_service" "orchestrator_api_ecs_service" {
 
   network_configuration {
     subnets         = var.subnets
+    assign_public_ip = true 
     security_groups = [aws_security_group.ecs_tasks_sg.id]
   }
 
@@ -214,6 +222,7 @@ resource "aws_ecs_service" "modelAi1_api_ecs_service" {
 
   network_configuration {
     subnets         = var.subnets
+    assign_public_ip = true 
     security_groups = [aws_security_group.ecs_tasks_sg.id]
   }
 
@@ -288,6 +297,7 @@ resource "aws_ecs_service" "modelAi2_api_ecs_service" {
 
   network_configuration {
     subnets         = var.subnets
+    assign_public_ip = true 
     security_groups = [aws_security_group.ecs_tasks_sg.id]
   }
 
@@ -362,6 +372,7 @@ resource "aws_ecs_service" "modelAi3_api_ecs_service" {
 
   network_configuration {
     subnets         = var.subnets
+    assign_public_ip = true 
     security_groups = [aws_security_group.ecs_tasks_sg.id]
   }
 

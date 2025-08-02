@@ -1,5 +1,5 @@
 variable "ecr_orchestratorAi_repository_name" {
-  description = "ECR Trace AI repository name"
+  description = "ECR Orchestrator AI repository name"
   type        = string
 }
 

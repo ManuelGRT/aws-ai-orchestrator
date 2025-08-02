@@ -79,6 +79,18 @@ resource "aws_iam_role_policy" "ecs_task_role_policy" {
           "firehose:PutRecordBatch"
         ],
         Resource =  "*"
+      },
+      {
+        Effect = "Allow",
+        Action = [
+          "dynamodb:PutItem",
+          "dynamodb:GetItem",
+          "dynamodb:UpdateItem",
+          "dynamodb:DeleteItem",
+          "dynamodb:Query",
+          "dynamodb:Scan"
+        ],
+        Resource =  "*"
       }
     ]
   })

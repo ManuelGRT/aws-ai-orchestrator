@@ -74,7 +74,7 @@ variable "orchestrator_nlb_target_group" {
 
 ##################### ECR #####################
 variable "ecr_orchestrator_repository_name" {
-  description = "ECR Trace AI repository name"
+  description = "ECR orchestrator Ai repository name"
   type        = string
 }
 
@@ -266,4 +266,21 @@ variable "secret_orchestratorAi_api_name" {
 variable "cloudmap_namespace" {
   description = "Name of the Cloudmap Namespace"
   type        = string
+}
+
+################## DYNAMODB ######################
+variable "dynamo_table_name" {
+  description = "Name of the DynamoDB table"
+  type        = string
+}
+
+variable "dynamo_hash_key" {
+  description = "Hash key for the table"
+  type        = string
+}
+
+variable "dynamo_hash_key_type" {
+  description = "Type of the hash key (S, N, B)"
+  type        = string
+  default     = "S"
 }

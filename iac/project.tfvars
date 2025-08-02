@@ -81,3 +81,8 @@ image_bucket_name = "orchestrator-ai-images"
 
 ### SECRET MANAGER ###
 secret_orchestratorAi_api_name = "orchestrator-ai-api-env"
+
+### DYNAMODB ###
+dynamo_table_name = "orchestrator-ai-api-info"
+dynamo_hash_key = "request_id"
+dynamo_hash_key_type = "S"

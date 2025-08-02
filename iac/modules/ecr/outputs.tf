@@ -1,5 +1,5 @@
 output "ecr_orchestratorAi_repository_url" {
-  description = "The URL of the Trace AI repository"
+  description = "The URL of the Orchestrator AI repository"
   value       = aws_ecr_repository.orchestratorAi_repo.repository_url
 }
 
