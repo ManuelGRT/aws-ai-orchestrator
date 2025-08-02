@@ -284,3 +284,25 @@ variable "dynamo_hash_key_type" {
   type        = string
   default     = "S"
 }
+
+################## LAMBDA ######################
+variable "lambda_delete_s3_images_name"{
+  description = "Name of the s3 delete images Lambda Function"
+  type        = string  
+}
+
+variable "trigger_lambda_delete_s3_images_name"{
+  description = "Name of the s3 delete images Lambda Event Bridge Trigger"
+  type        = string  
+}
+
+variable "s3_images_delete_timeout" {
+  description = "Timeout in days for deleting old images from S3"
+  type        = number
+  default     = 30
+}
+
+variable "lambda_delete_s3_iam_role_name" {
+  description = "Name of the IAM Role for the Lambda function that deletes S3 images"
+  type        = string
+}

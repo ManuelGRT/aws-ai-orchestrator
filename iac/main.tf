@@ -135,6 +135,7 @@ module "iam_role" {
   task_execution_role_name = var.task_execution_role_name
 
   s3_image_bucket_arn = module.s3_bucket.s3_images_bucket_arn
+  lambda_delete_s3_iam_role_name = var.lambda_delete_s3_iam_role_name
 }
 
 
@@ -153,6 +154,17 @@ module "secrets_manager" {
 
   secret_orchestratorAi_api_name = var.secret_orchestratorAi_api_name
 }
+
+module "lambda" {
+  source = "./modules/lambda"
+
+  iam_role_delete_s3_lambda_arn = module.iam_role.lambda_delete_s3_iam_role_arn
+  lambda_delete_s3_images_name = var.lambda_delete_s3_images_name
+  trigger_lambda_delete_s3_images_name = var.trigger_lambda_delete_s3_images_name
+  s3_image_bucket_name = var.image_bucket_name
+  s3_images_delete_timeout = var.s3_images_delete_timeout
+}
+
 module "dynamo_db" {
   source        = "./modules/dynamodb"
 

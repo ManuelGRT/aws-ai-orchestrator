@@ -23,3 +23,11 @@ variable "s3_image_bucket_arn" {
   description = "Image bucket name"
   type        = string
 }
+
+##################################
+# IAM ROLE LAMBDA DELETE S3 IMAGES
+##################################
+variable "lambda_delete_s3_iam_role_name" {
+  description = "Name of the IAM Role for the Lambda function that deletes S3 images"
+  type        = string
+}

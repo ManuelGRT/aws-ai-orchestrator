@@ -86,3 +86,9 @@ secret_orchestratorAi_api_name = "orchestrator-ai-api-env"
 dynamo_table_name = "orchestrator-ai-api-info"
 dynamo_hash_key = "request_id"
 dynamo_hash_key_type = "S"
+
+### LAMBDA ###
+lambda_delete_s3_images_name = "lambda-delete-s3-images"
+trigger_lambda_delete_s3_images_name = "trigger-lambda-delete-s3-images"
+s3_images_delete_timeout = 30
+lambda_delete_s3_iam_role_name = "lambda-delete-s3-images-role"

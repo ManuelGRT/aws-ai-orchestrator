@@ -157,3 +157,51 @@ resource "aws_iam_role_policy_attachment" "apigw_logs_policy" {
   role       = aws_iam_role.apigw_logs_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
 }
+
+###########################
+# IAM ROLE DELETE S3 IMAGES
+###########################
+resource "aws_iam_role" "lambda_delete_s3_iam_role" {
+  name = var.lambda_delete_s3_iam_role_name
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action    = "sts:AssumeRole"
+        Effect    = "Allow"
+        Principal = {
+          Service = "lambda.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_delete_s3_iam_role_basic_policy" {
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+  role       = aws_iam_role.lambda_delete_s3_iam_role.name
+}
+
+resource "aws_iam_role_policy" "lambda_delete_s3_iam_role_policy" {
+  name        = "lambda-s3-cleanup-policy"
+  role        = aws_iam_role.lambda_delete_s3_iam_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "s3:ListBucket",
+          "s3:DeleteObject"
+        ],
+        Resource = [
+          var.s3_image_bucket_arn,
+          "${var.s3_image_bucket_arn}/*"
+        ]
+      }
+    ]
+  })
+}
+
