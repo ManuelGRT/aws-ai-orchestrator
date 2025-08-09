@@ -8,13 +8,14 @@ resource "aws_api_gateway_rest_api" "public_api" {
   binary_media_types = ["multipart/form-data"]
 }
 
+#### PROXY ####
 resource "aws_api_gateway_resource" "public_proxy_resource" {
   rest_api_id = aws_api_gateway_rest_api.public_api.id
   parent_id   = aws_api_gateway_rest_api.public_api.root_resource_id
   path_part   = "{proxy+}"
 }
 
-#### COGNITO PUBLIC API GATEWAY
+# COGNITO PUBLIC API GATEWAY
 resource "aws_api_gateway_authorizer" "cognito_authorizer" {
   name          = "cognitoAuthorizer"
 
@@ -29,11 +30,8 @@ resource "aws_api_gateway_method" "public_proxy_method" {
   resource_id   = aws_api_gateway_resource.public_proxy_resource.id
   http_method   = "ANY"
 
-  /* COMENTADO PORQUE NO ESTÁ IMPLEMENTADO AUN EL COGNITO
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.cognito_authorizer.id
-  */
-  authorization = "NONE"
 
   request_parameters = {
     "method.request.path.proxy" = true
@@ -41,6 +39,7 @@ resource "aws_api_gateway_method" "public_proxy_method" {
   }
 }
 
+#### STATUS ####
 resource "aws_api_gateway_resource" "public_status_resource" {
   rest_api_id = aws_api_gateway_rest_api.public_api.id
   parent_id   = aws_api_gateway_rest_api.public_api.root_resource_id
@@ -58,7 +57,25 @@ resource "aws_api_gateway_method" "status_method" {
   }
 }
 
+#### AUTHORIZE ####
+resource "aws_api_gateway_resource" "public_authorize_resource" {
+  rest_api_id = aws_api_gateway_rest_api.public_api.id
+  parent_id   = aws_api_gateway_rest_api.public_api.root_resource_id
+  path_part   = "authorize"
+}
 
+resource "aws_api_gateway_method" "authorize_method" {
+  rest_api_id   = aws_api_gateway_rest_api.public_api.id
+  resource_id   = aws_api_gateway_resource.public_authorize_resource.id
+  http_method   = "GET"
+  authorization = "NONE"
+
+  request_parameters = {
+    "method.request.header.host" = true
+  }
+}
+
+#### VPC LINK ####
 resource "aws_api_gateway_vpc_link" "public_vpc_link" {
   name        = var.public_vpc_link_name
   target_arns = ["${var.nlb_orchestratorAi_arn}"]
@@ -92,6 +109,22 @@ resource "aws_api_gateway_integration" "public_status_vpc_link_integration" {
   connection_type        = "VPC_LINK"
   connection_id          = aws_api_gateway_vpc_link.public_vpc_link.id
   uri                    = "http://${var.nlb_orchestratorAi_dns_name}:80/status"
+
+  request_parameters = {
+    "integration.request.header.host" = "method.request.header.host"
+  }
+}
+
+resource "aws_api_gateway_integration" "public_authorize_vpc_link_integration" {
+  rest_api_id = aws_api_gateway_rest_api.public_api.id
+  resource_id = aws_api_gateway_resource.public_authorize_resource.id
+  http_method = aws_api_gateway_method.authorize_method.http_method
+
+  type                    = "HTTP_PROXY"
+  integration_http_method = "GET"
+  connection_type        = "VPC_LINK"
+  connection_id          = aws_api_gateway_vpc_link.public_vpc_link.id
+  uri                    = "http://${var.nlb_orchestratorAi_dns_name}:80/authorize"
 
   request_parameters = {
     "integration.request.header.host" = "method.request.header.host"

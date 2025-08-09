@@ -13,6 +13,7 @@ output "cognito_domain" {
   value       = aws_cognito_user_pool_domain.cognito_domain.domain
 }
 
+/*
 output "cognito_client_id" {
   description = "ID of the Cognito App Client"
   value       = aws_cognito_user_pool_client.app_client.id
@@ -22,3 +23,4 @@ output "cognito_client_secret_id" {
   description = "Secret ID of the Cognito App Client"
   value       = aws_cognito_user_pool_client.app_client.client_secret
 }
+*/
