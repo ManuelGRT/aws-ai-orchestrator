@@ -1,10 +1,7 @@
 from io import BytesIO
 from api.routers.logging import LoggingManager
 from api.schemas import image
-from api.utils.external_api_requests import ExternalApi
-from api.utils.private_api_requests import PrivateApi
 from api.utils.s3_bucket import S3Bucket
-from api.utils.config import step_config
 from sqlmodel import Session, select
 from fastapi import BackgroundTasks, HTTPException, Request, UploadFile
 import base64
@@ -13,10 +10,6 @@ from api.utils import commons as utils_commons
 from datetime import datetime
 from uuid import uuid4
 import time
-
-
-external_api = ExternalApi()
-private_api = PrivateApi()
 
 async def save_new_image(image_file: UploadFile, image_id: str, logger: LoggingManager):
     try:
