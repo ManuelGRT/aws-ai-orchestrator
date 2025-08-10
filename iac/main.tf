@@ -13,6 +13,16 @@ provider "aws" {
   shared_credentials_files = ["~/.aws/credentials"]
 }
 
+module "cloudfront" {
+  source = "./modules/cloudfront"
+
+  # TODO: waf_acl_arn = module.waf_acl.waf_acl_cloudfront_arn
+  public_alternate_domain_name = "orchestrator-ai.com" # var.public_alternate_domain_name
+  s3_public_app_bucket_regional_domain_name = module.s3_bucket.s3_public_app_bucket_domain_name
+  public_acm_certificate_arn = "" # TODO: var.public_global_acm_certificate_arn
+  s3_cloudfront_log_bucket_domain_name = "" # TODO: module.s3_bucket.s3_cloudfront_log_bucket_domain_name
+}
+
 module "cognito" {
   source = "./modules/cognito"
 
@@ -147,6 +157,9 @@ module "s3_bucket" {
   vpc_s3_gateway_endpoint_id = var.vpc_s3_gateway_endpoint_id
 
   s3_apigw_waf_log_bucket_name = var.waf_apigw_s3_log_bucket_name
+
+  s3_cloudfront_bucket_name = var.s3_cloudfront_bucket_name
+  cloudfront_oai_arn = module.cloudfront.cloudfront_oai_arn
 }
 
 module "secrets_manager" {

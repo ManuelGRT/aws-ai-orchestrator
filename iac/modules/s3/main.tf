@@ -156,3 +156,77 @@ resource "aws_s3_bucket_public_access_block" "waf_apigw_s3_block_public_access" 
   ignore_public_acls      = true
   restrict_public_buckets = true
 }
+
+
+######################
+# S3 PUBLIC APP BUCKET
+######################
+resource "aws_s3_bucket" "s3_bucket_cloudfront" {
+  bucket = var.s3_cloudfront_bucket_name
+  force_destroy = true
+}
+
+resource "aws_s3_bucket_versioning" "s3_bucket_cloudfront_versioning" {
+  bucket = aws_s3_bucket.s3_bucket_cloudfront.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+/*
+resource "aws_s3_bucket_logging" "s3_bucket_cloudfront_logging" {
+  bucket = aws_s3_bucket.s3_bucket_cloudfront.id
+
+  target_bucket = aws_s3_bucket.central_log_bucket.id
+  target_prefix = var.s3_cloudfront_bucket_name
+}
+*/
+
+resource "aws_s3_bucket_policy" "bucket_policy" {
+  bucket = aws_s3_bucket.s3_bucket_cloudfront.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect    = "Deny"
+        Action    = ["s3:*"]
+        Resource  = [
+          aws_s3_bucket.s3_bucket_cloudfront.arn,
+          "${aws_s3_bucket.s3_bucket_cloudfront.arn}/*"
+        ]
+        Principal = {
+          AWS = "*"
+        }
+        Condition = {
+          Bool = {
+            "aws:SecureTransport" = "false"
+          }
+        }
+      },
+      {
+        Effect   = "Allow"
+        Action   = [
+          "s3:GetBucket*",
+          "s3:GetObject*",
+          "s3:List*"
+        ]
+        Resource = [
+          aws_s3_bucket.s3_bucket_cloudfront.arn,
+          "${aws_s3_bucket.s3_bucket_cloudfront.arn}/*"
+        ]
+        Principal = {
+          AWS = var.cloudfront_oai_arn
+        }
+      },
+      {
+        Effect   = "Allow"
+        Action   = ["s3:GetObject"]
+        Resource = "${aws_s3_bucket.s3_bucket_cloudfront.arn}/*"
+        Principal = {
+          AWS = var.cloudfront_oai_arn
+        }
+      }
+    ]
+  })
+}

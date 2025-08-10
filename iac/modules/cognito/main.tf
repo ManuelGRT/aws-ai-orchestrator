@@ -3,6 +3,8 @@ resource "aws_cognito_user_pool_client" "user_pool_client" {
   user_pool_id = aws_cognito_user_pool.user_pool.id
 
   explicit_auth_flows = [
+    "ALLOW_ADMIN_USER_PASSWORD_AUTH",
+    "ALLOW_USER_AUTH",
     "ALLOW_USER_PASSWORD_AUTH",
     "ALLOW_REFRESH_TOKEN_AUTH",
     "ALLOW_CUSTOM_AUTH"
@@ -14,6 +16,15 @@ resource "aws_cognito_user_pool_client" "user_pool_client" {
   allowed_oauth_flows = ["code", "implicit"]
   allowed_oauth_scopes = ["openid"]
   supported_identity_providers = ["COGNITO"]
+
+  access_token_validity        = 60
+  id_token_validity            = 60
+  refresh_token_validity       = 30
+  token_validity_units {
+    access_token  = "minutes"
+    id_token      = "minutes"
+    refresh_token = "days"
+  }
 }
 
 resource "aws_cognito_user" "fake_user" {

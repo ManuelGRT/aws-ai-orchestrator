@@ -256,6 +256,11 @@ variable "image_bucket_name" {
   type        = string
 }
 
+variable "s3_cloudfront_bucket_name" {
+  description = "Name of the app S3 Bucket"
+  type        = string  
+}
+
 ################## SECRET MANAGER #####################
 variable "secret_orchestratorAi_api_name" {
   description = "Name of the orchestratorAi Api Secret"

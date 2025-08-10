@@ -78,6 +78,7 @@ private_hosted_zone_id = ""
 
 ### S3 BUCKET ###
 image_bucket_name = "orchestrator-ai-images"
+s3_cloudfront_bucket_name = "orchestrator-ai-app"
 
 ### SECRET MANAGER ###
 secret_orchestratorAi_api_name = "orchestrator-ai-api-env"

@@ -23,3 +23,16 @@ variable "s3_apigw_waf_log_bucket_name" {
   description = "Name of the Public Api Gateway WAF ACL S3 Log Bucket"
   type        = string  
 }
+
+######################
+# PUBLIC APP S3 BUCKET
+######################
+variable "s3_cloudfront_bucket_name" {
+  description = "Name of the app S3 Bucket"
+  type        = string  
+}
+
+variable "cloudfront_oai_arn" {
+  description = "Cloudfront OAI Arn"
+  type        = string  
+}
