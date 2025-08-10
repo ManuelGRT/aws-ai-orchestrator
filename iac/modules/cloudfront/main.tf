@@ -32,7 +32,7 @@ resource "aws_cloudfront_distribution" "cloudfront" {
   retain_on_delete    = false
   wait_for_deployment = false
 
-  # web_acl_id          = var.waf_acl_arn
+  web_acl_id          = var.waf_acl_arn
   # aliases             = [var.public_alternate_domain_name]
 
   origin {
@@ -69,13 +69,12 @@ resource "aws_cloudfront_distribution" "cloudfront" {
     response_page_path = "/index.html"
   }
 
-  /*
+
   logging_config {
     include_cookies = false
     bucket          = var.s3_cloudfront_log_bucket_domain_name
     prefix          = "cloudfront"
   }
-  */
 
   viewer_certificate {
     # acm_certificate_arn            = var.public_acm_certificate_arn

@@ -15,3 +15,17 @@ variable "s3_apigw_waf_bucket_arn" {
   description = "The ARN of the Api Gateway WAF s3 Bucket"
   type        = string
 }
+
+
+######################
+# WAF ACL CLOUDFRONT #
+######################
+variable "waf_cloudfront_name" {
+  description = "Name of the Cloudfront WAF ACL"
+  type        = string
+}
+
+variable "s3_cloudfront_waf_bucket_arn" {
+  description = "The ARN of the Cloudfront WAF s3 Bucket"
+  type        = string
+}

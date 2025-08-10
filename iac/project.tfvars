@@ -64,6 +64,8 @@ modelAi3_ecs_service_name = "model3-ai-api"
 ### WAF ACL ###
 waf_apigw_name = "waf-public-apigw"
 waf_apigw_s3_log_bucket_name = "aws-waf-logs-public-apigw"
+waf_cloudfront_name = "waf-cloudfront"
+s3_cloudfront_waf_log_bucket_name = "aws-waf-logs-global-cf"
 
 ### COGNITO ###
 cognito_user_pool_name = "cognito-public-auth"
@@ -79,6 +81,7 @@ private_hosted_zone_id = ""
 ### S3 BUCKET ###
 image_bucket_name = "orchestrator-ai-images"
 s3_cloudfront_bucket_name = "orchestrator-ai-app"
+s3_cloudfront_log_bucket_name = "orchestrator-ai-app-logs"
 
 ### SECRET MANAGER ###
 secret_orchestratorAi_api_name = "orchestrator-ai-api-env"

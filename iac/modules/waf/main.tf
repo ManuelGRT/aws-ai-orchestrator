@@ -1,3 +1,236 @@
+provider "aws" {
+  alias  = "us-east-1"
+  region = "us-east-1" 
+}
+
+####################
+# WAF ACL CLOUDFRONT
+####################
+resource "aws_wafv2_web_acl" "cloudfront_waf" {
+  name        = var.waf_cloudfront_name
+  provider    = aws.us-east-1 
+  scope       = "CLOUDFRONT"
+
+  default_action {
+    allow {}
+  }
+
+  rule {
+    name     = "AWS-AWSManagedRulesKnownBadInputsRuleSet"
+    priority = 0
+
+    statement {
+      managed_rule_group_statement {
+        vendor_name = "AWS"
+        name        = "AWSManagedRulesKnownBadInputsRuleSet"
+      }
+    }
+
+    override_action {
+      none {}
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AWSManagedRulesKnownBadInputsRuleSet"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
+    name     = "AWS-AWSManagedRulesCommonRuleSet"
+    priority = 1
+
+    statement {
+      managed_rule_group_statement {
+        vendor_name = "AWS"
+        name        = "AWSManagedRulesCommonRuleSet"
+      }   
+    }
+
+    override_action {
+      none {}
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AWSManagedRulesCommonRuleSet"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
+    name     = "AWS-AWSManagedRulesAnonymousIpList"
+    priority = 2
+
+    statement {
+      managed_rule_group_statement {
+        vendor_name = "AWS"
+        name        = "AWSManagedRulesAnonymousIpList"
+      }
+    }
+
+    override_action {
+      none {}
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AWSManagedRulesAnonymousIpList"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
+    name     = "AWS-AWSManagedRulesAmazonIpReputationList"
+    priority = 3
+
+    statement {
+      managed_rule_group_statement {
+        vendor_name = "AWS"
+        name        = "AWSManagedRulesAmazonIpReputationList"
+      }
+    }
+
+    override_action {
+      none {}
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AWSManagedRulesAmazonIpReputationList"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
+    name     = "AWS-AWSManagedRulesAdminProtectionRuleSet"
+    priority = 4
+
+    statement {
+      managed_rule_group_statement {
+        vendor_name = "AWS"
+        name        = "AWSManagedRulesAdminProtectionRuleSet"
+      }
+    }
+
+    override_action {
+      none {}
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AWSManagedRulesAdminProtectionRuleSet"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
+    name     = "AWS-AWSManagedRulesSQLiRuleSet"
+    priority = 5
+
+    statement {
+      managed_rule_group_statement {
+        vendor_name = "AWS"
+        name        = "AWSManagedRulesSQLiRuleSet"
+      }
+    }
+
+    override_action {
+      none {}
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AWSManagedRulesSQLiRuleSet"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  visibility_config {
+    cloudwatch_metrics_enabled = true
+    metric_name                = "cloudfront-waf"
+    sampled_requests_enabled   = true
+  }
+
+}
+
+
+resource "aws_wafv2_web_acl_logging_configuration" "waf_cloudfront_logging" {
+  provider    = aws.us-east-1  
+
+  log_destination_configs = [
+    var.s3_cloudfront_waf_bucket_arn
+  ]
+
+  resource_arn = aws_wafv2_web_acl.cloudfront_waf.arn
+
+  logging_filter {
+    default_behavior = "DROP"
+
+    filter {
+      behavior = "KEEP"
+      requirement = "MEETS_ANY"
+
+      condition {
+        action_condition {
+          action = "BLOCK"
+        }
+      }
+
+      dynamic "condition" {
+        for_each = [
+          "awswaf:managed:aws:known-bad-inputs:JavaDeserializationRCE_URIPath",
+          "awswaf:managed:aws:known-bad-inputs:Propfind_Method",
+          "awswaf:managed:aws:known-bad-inputs:Log4JRCE_URIPath",
+          "awswaf:managed:aws:known-bad-inputs:JavaDeserializationRCE_Body",
+          "awswaf:managed:aws:known-bad-inputs:JavaDeserializationRCE_Header",
+          "awswaf:managed:aws:known-bad-inputs:JavaDeserializationRCE_QueryString",
+          "awswaf:managed:aws:known-bad-inputs:Log4JRCE_QueryString",
+          "awswaf:managed:aws:known-bad-inputs:Log4JRCE_Body",
+          "awswaf:managed:aws:known-bad-inputs:Log4JRCE_Header",
+          "awswaf:managed:aws:known-bad-inputs:ExploitablePaths_URIPath",
+          "awswaf:managed:aws:known-bad-inputs:Host_Localhost_Header",
+          "awswaf:managed:aws:core-rule-set:SizeRestrictions_URIPath",
+          "awswaf:managed:aws:core-rule-set:GenericRFI_QueryArguments",
+          "awswaf:managed:aws:core-rule-set:EC2MetaDataSSRF_Body",
+          "awswaf:managed:aws:core-rule-set:SizeRestrictions_QueryString",
+          "awswaf:managed:aws:core-rule-set:CrossSiteScripting_Body",
+          "awswaf:managed:aws:core-rule-set:SizeRestrictions_Body",
+          "awswaf:managed:aws:core-rule-set:RestrictedExtensions_QueryArguments",
+          "awswaf:managed:aws:core-rule-set:CrossSiteScripting_QueryArguments",
+          "awswaf:managed:aws:core-rule-set:EC2MetaDataSSRF_QueryArguments",
+          "awswaf:managed:aws:core-rule-set:GenericLFI_URIPath",
+          "awswaf:managed:aws:core-rule-set:GenericRFI_Body",
+          "awswaf:managed:aws:core-rule-set:GenericLFI_Body",
+          "awswaf:managed:aws:core-rule-set:BadBots_Header",
+          "awswaf:managed:aws:core-rule-set:EC2MetaDataSSRF_Cookie",
+          "awswaf:managed:aws:core-rule-set:SizeRestrictions_Cookie_Header",
+          "awswaf:managed:aws:core-rule-set:NoUserAgent_Header",
+          "awswaf:managed:aws:core-rule-set:EC2MetaDataSSRF_URIPath",
+          "awswaf:managed:aws:core-rule-set:RestrictedExtensions_URIPath",
+          "awswaf:managed:aws:core-rule-set:CrossSiteScripting_Cookie",
+          "awswaf:managed:aws:core-rule-set:GenericRFI_URIPath",
+          "awswaf:managed:aws:core-rule-set:CrossSiteScripting_URIPath",
+          "awswaf:managed:aws:core-rule-set:GenericLFI_QueryArguments",
+          "awswaf:managed:aws:anonymous-ip-list:AnonymousIPList",
+          "awswaf:managed:aws:anonymous-ip-list:HostingProviderIPList",
+          "awswaf:managed:aws:amazon-ip-list:AWSManagedIPDDoSList",
+          "awswaf:managed:aws:amazon-ip-list:AWSManagedReconnaissanceList",
+          "awswaf:managed:aws:amazon-ip-list:AWSManagedIPReputationList",
+          "awswaf:managed:aws:admin-protection:AdminProtection_URIPath"
+        ]
+        content {
+          label_name_condition {
+            label_name = condition.value
+          }
+          
+        }
+      }
+    }
+  }
+}
+
 ############################
 # WAF ACL PUBLIC API GATEWAY
 ############################

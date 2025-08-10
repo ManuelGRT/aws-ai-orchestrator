@@ -36,3 +36,19 @@ variable "cloudfront_oai_arn" {
   description = "Cloudfront OAI Arn"
   type        = string  
 }
+
+##########################
+# CLOUDFRONT S3 LOG BUCKET
+##########################
+variable "s3_cloudfront_log_bucket_name" {
+  description = "Name of the Cloudfront S3 Log Bucket"
+  type        = string  
+}
+
+##############################
+# CLOUDFRONT WAF S3 LOG BUCKET
+##############################
+variable "s3_cloudfront_waf_log_bucket_name" {
+  description = "Name of the Cloudfront WAF ACL S3 Log Bucket"
+  type        = string  
+}

@@ -208,9 +208,9 @@ variable "waf_apigw_name" {
   description = "Name of the WAF S3 Log Bucket"
 }
 
-variable "waf_apigw_s3_log_bucket_name" {
+variable "waf_cloudfront_name" {
+  description = "Name of the Cloudfront WAF ACL"
   type        = string
-  description = "Name of the WAF S3 Log Bucket"
 }
 
 ############### COGNITO ####################
@@ -259,6 +259,21 @@ variable "image_bucket_name" {
 variable "s3_cloudfront_bucket_name" {
   description = "Name of the app S3 Bucket"
   type        = string  
+}
+
+variable "s3_cloudfront_log_bucket_name" {
+  description = "Name of the Cloudfront S3 Log Bucket"
+  type        = string  
+}
+
+variable "s3_cloudfront_waf_log_bucket_name" {
+  description = "Name of the Cloudfront WAF ACL S3 Log Bucket"
+  type        = string  
+}
+
+variable "waf_apigw_s3_log_bucket_name" {
+  type        = string
+  description = "Name of the WAF S3 Log Bucket"
 }
 
 ################## SECRET MANAGER #####################

@@ -75,14 +75,6 @@ resource "aws_iam_role_policy" "ecs_task_role_policy" {
       {
         Effect = "Allow",
         Action = [
-          "firehose:PutRecord",
-          "firehose:PutRecordBatch"
-        ],
-        Resource =  "*"
-      },
-      {
-        Effect = "Allow",
-        Action = [
           "dynamodb:PutItem",
           "dynamodb:GetItem",
           "dynamodb:UpdateItem",

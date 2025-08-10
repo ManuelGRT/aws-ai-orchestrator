@@ -1,9 +1,7 @@
-/*
 variable "waf_acl_arn" {
   description = "ARN of the WAF ACL"
   type        = string
 }
-*/
 
 variable "s3_public_app_bucket_regional_domain_name" {
   description = "The Regional Domain Name of the Public App s3 Bucket"

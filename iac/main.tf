@@ -16,11 +16,11 @@ provider "aws" {
 module "cloudfront" {
   source = "./modules/cloudfront"
 
-  # TODO: waf_acl_arn = module.waf_acl.waf_acl_cloudfront_arn
+  waf_acl_arn = module.waf_acl.waf_acl_cloudfront_arn
   public_alternate_domain_name = "orchestrator-ai.com" # var.public_alternate_domain_name
   s3_public_app_bucket_regional_domain_name = module.s3_bucket.s3_public_app_bucket_domain_name
   public_acm_certificate_arn = "" # TODO: var.public_global_acm_certificate_arn
-  s3_cloudfront_log_bucket_domain_name = "" # TODO: module.s3_bucket.s3_cloudfront_log_bucket_domain_name
+  s3_cloudfront_log_bucket_domain_name = module.s3_bucket.s3_cloudfront_log_bucket_domain_name
 }
 
 module "cognito" {
@@ -114,6 +114,9 @@ module "ecs" {
 module "waf_acl" {
   source = "./modules/waf"
 
+  # Cloudfront WAF ACL
+  waf_cloudfront_name = var.waf_cloudfront_name
+  s3_cloudfront_waf_bucket_arn = module.s3_bucket.s3_cloudfront_waf_bucket_arn
 
   # Public Api-Gateway WAF ACL
   waf_apigw_name = var.waf_apigw_name
@@ -160,6 +163,10 @@ module "s3_bucket" {
 
   s3_cloudfront_bucket_name = var.s3_cloudfront_bucket_name
   cloudfront_oai_arn = module.cloudfront.cloudfront_oai_arn
+  s3_cloudfront_log_bucket_name = var.s3_cloudfront_log_bucket_name
+
+  s3_cloudfront_waf_log_bucket_name = var.s3_cloudfront_waf_log_bucket_name
+
 }
 
 module "secrets_manager" {
