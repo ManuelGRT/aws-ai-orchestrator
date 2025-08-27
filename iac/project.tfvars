@@ -25,7 +25,7 @@ orchestrator_nlb_target_group = "nlb-orchestrator-ai-tg"
 
 ### ECR ###
 ecr_orchestrator_repository_name = "orchestrator-ai-api-repository"
-ecr_modelAi1_repository_name = "model1-ai-api-repository"
+ecr_modelAi1_repository_name = "upscaling-ai-api-repository"
 ecr_modelAi2_repository_name = "model2-ai-api-repository"
 ecr_modelAi3_repository_name = "model3-ai-api-repository"
 
@@ -44,10 +44,10 @@ orchestrator_ecs_task_memory = 1024
 orchestrator_ecs_service_name = "orchestrator-ai-api"
 
 ## MODEL AI 1 ECS ##
-modelAi1_ecs_task_definition_name = "task-model1-ai-api"
-modelAi1_ecs_task_cpu = 256
-modelAi1_ecs_task_memory = 1024
-modelAi1_ecs_service_name = "model1-ai-api"
+modelAi1_ecs_task_definition_name = "task-upscaling-ai-api"
+modelAi1_ecs_task_cpu = 2048
+modelAi1_ecs_task_memory = 4096
+modelAi1_ecs_service_name = "upscaling-ai-api"
 
 ## MODEL AI 2 ECS ##
 modelAi2_ecs_task_definition_name = "task-model2-ai-api"

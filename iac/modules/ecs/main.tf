@@ -232,10 +232,10 @@ resource "aws_ecs_service" "modelAi1_api_ecs_service" {
 
     service {
       port_name = "http"
-      discovery_name = "modelai1-api"
+      discovery_name = "upscaling-ai-api"
       client_alias {
         port     = 80
-        dns_name = "modelai1-api"
+        dns_name = "upscaling-ai-api"
       }
     }
   }
