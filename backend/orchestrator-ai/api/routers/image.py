@@ -13,6 +13,7 @@ from api.schemas.persistance import OrchestratorApiPersistance
 from api.services import orchestrator_service, auth_service
 from api.utils import commons as utils_commons
 from api.utils.dynamodb import DynamoDB
+from api.utils.model1_api_requests import ModelAiApi  # Make sure this import path is correct
 
 
 router = APIRouter()
@@ -40,7 +41,7 @@ async def image_ai_analysis(
     '''
 
     # auth_service.verify_token(request)
-    image_id = uuid4()
+    image_id = str(uuid4())
     logger = LoggingManager(context.get(header_keys.HeaderKeys.request_id),image_id)
     try:
         init_time = time.time()
@@ -49,6 +50,14 @@ async def image_ai_analysis(
         image_result = await orchestrator_service.save_new_image(
             image_file, image_id, logger
         )
+
+        upscale_api = ModelAiApi()
+        image_file.file.seek(0)
+        response_ai_api = upscale_api.analyze_image(
+            image_bytes=image_file.file, image_id=image_id, service_name="upscale-image", logger=logger
+        )
+        if response_ai_api is None:
+            raise HTTPException(status_code=400, detail="Error Getting Api Info")
 
         # TODO: SEND IMAGE TO MODELS FOR AI ANALYSIS
         logger.info(f"Finishing ai orchestrator process...")

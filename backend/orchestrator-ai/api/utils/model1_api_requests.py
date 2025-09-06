@@ -11,18 +11,22 @@ ENV_SECRET_ARN = "arn:aws:secretsmanager:eu-west-1:435772683141:secret:orchestra
 logger = logging.getLogger(__name__)
 
 
-class Model1Api:
+class ModelAiApi:
 
     def __init__(self):
         # self.secret = get_secret(ENV_SECRET_ARN)
-        self.host_repository = "" # self.secret["HOST_REPOSITORY"]
+        self.host_repository = "http://upscaling-ai-api" # self.secret["HOST_REPOSITORY"]
 
-    def get_image_from_storage(self, image_id):
+    def analyze_image(self, image_bytes, image_id, service_name, logger):
         try:
-            url = f"{self.host_repository}/upscale"
-            logger.info(f"[{image_id}] Model1 URL to request: {url}")
+            url = f"{self.host_repository}/{service_name}"
+            logger.info(f"[{image_id}] Model Ai URL to request: {url}")
+            file_name = image_id + ".jpg"
 
-            response = requests.get(url)
+            files = {'file': (file_name, image_bytes, 'image/jpeg')}
+            
+            response = requests.post(url, files=files, data={"image_id": image_id})
+
             content_type = response.headers.get('Content-Type', 'application/octet-stream')
             logger.info(f"[{image_id}] Content type: {content_type}")
 
@@ -31,6 +35,8 @@ class Model1Api:
         except Exception as error:
             logger.error(f"[{image_id}] Error during Model1 Api request: {error}")
             raise HTTPException(status_code=400, detail="Error during Api request")            
+
+
 
 
     def get_image_status(self, image_id):
