@@ -1,0 +1,22 @@
+boto3==1.17.14
+botocore==1.20.112
+coverage==5.5
+fastapi==0.109.0
+starlette==0.35.1
+starlette-context==0.3.6
+mock==4.0.3
+moto==2.2.13
+pydantic==1.10.2
+pylint==2.11.1
+pytest==6.2.4
+structlog==21.1.0
+uvicorn==0.25.0
+aws_secretsmanager_caching==1.1.1.5
+aws_encryption_sdk==3.1.1
+Pillow==9.2.0
+python-multipart==0.0.20
+aiomysql == 0.2.0
+httpx>=0.23,<0.27
+sqlalchemy>=1.4,<2.0
+sqlmodel==0.0.11
+pandas == 2.2.3
