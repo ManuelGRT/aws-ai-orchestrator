@@ -45,29 +45,11 @@ resource "aws_s3_bucket_policy" "images_bucket_policy" {
           Bool = {
             "aws:SecureTransport" = "false"
           }
-          /*StringNotEquals = {
-            "aws:SourceVpce": var.vpc_s3_gateway_endpoint_id
-          }*/
         }
       }
     ]
   })
 }
-
-/*
-resource "aws_s3_bucket_server_side_encryption_configuration" "images_bucket_encryption" {
-  bucket = aws_s3_bucket.images_bucket.id
-
-  rule {
-    apply_server_side_encryption_by_default {
-      kms_master_key_id = var.kms_key_arn
-      sse_algorithm     = "aws:kms"
-    }
-
-    bucket_key_enabled = false
-  }
-}
-*/
 
 resource "aws_s3_bucket_lifecycle_configuration" "images_bucket_lifecycle" {
   bucket = aws_s3_bucket.images_bucket.id
