@@ -8,7 +8,7 @@ from fastapi import APIRouter, File, UploadFile, HTTPException
 from fastapi.responses import StreamingResponse
 from starlette_context import context, header_keys
 
-from api.services import inpainting_service
+from api.utils import inpainting_service
 from api.schemas.persistance import InpantingApiPersistance
 import io
 import cv2
@@ -45,7 +45,7 @@ async def inpaint_image(
         logger.info(f"Finishing inpainting process...")
         
         response_time = time.time() - init_time
-        logger.info(f"Ai orchestrator image process time: {response_time}")
+        logger.info(f"Ai inpainting image process time: {response_time}")
 
         dynamodb = DynamoDB()
         background_tasks.add_task(
@@ -67,10 +67,10 @@ async def inpaint_image(
         return response
         
     except (HTTPException, Exception) as error:
-        logger.error(f"Error during Ai orchestrator image: {error}")
+        logger.error(f"Error during Ai inpainting image: {error}")
         response_time = time.time() - init_time
         status_code = getattr(error, "status_code", 400)
-        detail = getattr(error, "detail", "Error during Ai orchestrator image")
+        detail = getattr(error, "detail", "Error during Ai inpainting image")
 
         raise HTTPException(
             status_code=status_code,

@@ -1,9 +1,3 @@
-"""
-File Name: main.py
-@author: Advanced Analytics Spain
-Date: 06/07/2020
-Description: this file is NOT a part of the code, it's just a test call to the model
-"""
 import logging
 
 from fastapi import FastAPI
@@ -17,7 +11,7 @@ from starlette_context import plugins
 from starlette_context.middleware import RawContextMiddleware
 
 from api.config.api_settigs import APISettings
-from api.errors import exception_handlers
+from api.config import exception_handlers
 from api.routers.api import api_router
 
 logger = logging.getLogger(__name__)

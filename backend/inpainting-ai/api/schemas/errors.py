@@ -1,11 +1,8 @@
-# pylint: disable= no-name-in-module, missing-class-docstring, missing-function-docstring, no-self-argument,
-# pylint: disable= no-self-use, too-few-public-methods
 from typing import List
 from typing import Optional
 
 from pydantic import BaseModel
 from pydantic import Field
-from pydantic import validator
 
 from api.config.api_settigs import APISettings
 
@@ -23,11 +20,6 @@ class ErrorResponse(BaseModel):
     type: str = Field(description="Error type represented by its class", example="<class 'KeyError'>")
     application: str = Field(description="Application name", example=APISettings.get_settings().app_name)
     timestamp: str = Field(
-        description="Date in CLF (https://httpd.apache.org/docs/current/logs.html#common) "
-                    "with this specific format: %d/%b/%Y:%H:%M:%S %z",
+        description="Date with this specific format: %d/%b/%Y:%H:%M:%S %z",
         example="17/Aug/2021:10:55:24 +0000")
     errors: Optional[List[ErrorResponseErrors]] = Field(description="Detailed errors information")
-
-    @validator('errors')
-    def serialize_errors(cls, errors):
-        return [error.__dict__ for error in errors]
