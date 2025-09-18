@@ -1,68 +1,71 @@
 from datetime import datetime
 import logging
 import time
-from typing import List, Optional
-from uuid import uuid4
-from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, HTTPException, Request, UploadFile
+from fastapi import APIRouter, BackgroundTasks, File, Form, HTTPException, Request, UploadFile
 from pydantic import Field
 from starlette_context import context, header_keys
 
 from api.routers.logging import LoggingManager
-from api.schemas import image
-from api.schemas.persistance import OrchestratorApiPersistance
+from api.schemas.persistance import UpsaclingApiPersistance
 from api.utils import commons as utils_commons
 from api.utils.dynamodb import DynamoDB
-from fastapi import FastAPI, UploadFile, File, HTTPException
-from fastapi.responses import StreamingResponse, JSONResponse
-from PIL import Image
-from realesrgan_ncnn_py import Realesrgan
-import io
 
+from api.utils import upscaling_service
 
 router = APIRouter()
-
 logger = logging.getLogger(__name__)
 
 
 #################
 # IMAGE UPSCALING
 #################
-@router.post("/upscale-image",
+@router.post("/analyze-image",
              responses=utils_commons.RESPONSES,
-             response_model=image.UploadImageOutput,
              name="Upscale Image")
-async def upscale(request: Request, file: UploadFile = File(...), image_id: Optional[str] = None):
-    init_time = time.time()
-    image_id_2 = str(uuid4())
-    logger.info(f"Received image with ID: {image_id}")
+async def upscale(
+                background_tasks: BackgroundTasks,
+                request: Request,
+                image_id: str = Form(..., description='Part of the vehicles', example='ai service name'), 
+                image_file: UploadFile = File(..., description='Image file')):
 
+    logger = LoggingManager(context.get(header_keys.HeaderKeys.request_id),image_id)
     try:
-        data = await file.read()
-        img = Image.open(io.BytesIO(data)).convert("RGB")
-    except Exception:
-        raise HTTPException(status_code=400, detail="Archivo no válido o no es una imagen")
-
-    try:
-        realesrgan = request.app.state.realesrgan
-        up = realesrgan.process_pil(img)
-
-        buf = io.BytesIO()
-        up.save(buf, format="PNG")
-        buf.seek(0)
-        return StreamingResponse(
-            buf,
-            media_type="image/png",
-            headers={"Content-Disposition": "inline; filename=upscaled.png"}
-        )
-    
-    
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.exception(f"Error during upscaling: {e}")
+        logger.info(f"Starting upscaling process...")
+        init_time = time.time()
+        response = await upscaling_service.upscale_image(image_file=image_file, logger=logger, request=request)
+        logger.info(f"Finishing upscaling process...")
+        
         response_time = time.time() - init_time
+        logger.info(f"Ai upscaling image process time: {response_time}")
+
+        dynamodb = DynamoDB()
+        background_tasks.add_task(
+            dynamodb.upload_api_persistance,
+            logger=logger,
+            data_api=UpsaclingApiPersistance(
+                request_id=context.get(header_keys.HeaderKeys.request_id),
+                api_id="upscaling_ai_api",
+                image_id=str(image_id),
+                response_latency=int(response_time*1000),
+                request_datetime=datetime.utcnow().isoformat(),
+                http_method=request.method,
+                resource_path=str(request.url.path),
+                status="200",
+                error_message=None
+            )
+        )
+
+        return response
+        
+    except (HTTPException, Exception) as error:
+        logger.error(f"Error during Ai upscaling image: {error}")
+        response_time = time.time() - init_time
+        status_code = getattr(error, "status_code", 400)
+        detail = getattr(error, "detail", "Error during Ai upscaling image")
+
         raise HTTPException(
-            status_code=500,
-            detail="Error durante el procesado de la imagen",
-            headers={"response_time": str(response_time), "image_id": image_id}
+            status_code=status_code,
+            detail=detail,
+            headers={"response_time": response_time,
+                     "image_id": str(image_id)}
         )

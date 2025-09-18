@@ -1,6 +1,6 @@
 import logging
 
-from api.schemas import status
+from api.schemas import health
 from api.utils import commons as utils_commons
 
 from fastapi import APIRouter
@@ -12,15 +12,15 @@ router = APIRouter()
 #################
 # API STATUS
 #################
-@router.get("/status",
-            response_model=status.StatusOutput,
+@router.get("/health",
+            response_model=health.HealthOutput,
             responses=utils_commons.RESPONSES,
-            name="Get Verificacion Digital Autos API Status")
+            name="Get API Health check")
 def status():
     """
     Returns API status.
     :return: UP status in json format
     """
-    logger.info("Status endpoint reached correctly")
-    return {"status": "UP"}
+    logger.info("Health endpoint reached correctly")
+    return {"health": "OK"}
 

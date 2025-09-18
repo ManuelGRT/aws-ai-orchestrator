@@ -1,11 +1,11 @@
 import os
-from api.utils.aws import get_secret
+from api.utils.commons import get_secret
 import boto3
 import time
 
 from fastapi import HTTPException
 from api.routers.logging import LoggingManager
-from api.schemas.persistance import OrchestratorApiPersistance
+from api.schemas.persistance import UpsaclingApiPersistance
 
 # ENV_SECRET_ARN = os.getenv("ENV_SECRET_ARN")
 
@@ -19,7 +19,7 @@ class DynamoDB:
         self.db    = boto3.resource('dynamodb')
         self.table = self.db.Table(self.DYNAMODB_TABLE)
 
-    def upload_api_persistance(self, data_api: OrchestratorApiPersistance, logger: LoggingManager):
+    def upload_api_persistance(self, data_api: UpsaclingApiPersistance, logger: LoggingManager):
         try:
             logger.info(f"Saving api info in DynamoDB: {data_api.dict()}")
             self.table.put_item(Item=data_api.dict())
