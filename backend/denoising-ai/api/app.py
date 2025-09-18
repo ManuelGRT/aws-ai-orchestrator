@@ -1,9 +1,3 @@
-"""
-File Name: main.py
-@author: Advanced Analytics Spain
-Date: 06/07/2020
-Description: this file is NOT a part of the code, it's just a test call to the model
-"""
 import logging
 
 from fastapi import FastAPI
