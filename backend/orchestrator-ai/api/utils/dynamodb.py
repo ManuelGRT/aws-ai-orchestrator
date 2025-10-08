@@ -1,5 +1,5 @@
 import os
-from api.utils.aws import get_secret
+from api.utils.commons import get_secret
 import boto3
 import time
 

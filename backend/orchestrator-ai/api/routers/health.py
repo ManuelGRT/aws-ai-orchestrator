@@ -12,15 +12,15 @@ router = APIRouter()
 #################
 # API STATUS
 #################
-@router.get("/status",
-            response_model=status.StatusOutput,
+@router.get("/health",
+            response_model=status.HealthOutput,
             responses=utils_commons.RESPONSES,
-            name="Get Verificacion Digital Autos API Status")
-def status():
+            name="Get Health")
+def health():
     """
-    Returns API status.
+    Returns API health.
     :return: UP status in json format
     """
     logger.info("Status endpoint reached correctly")
-    return {"status": "UP"}
+    return {"health": "OK"}
 

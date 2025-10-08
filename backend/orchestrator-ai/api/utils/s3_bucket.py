@@ -1,18 +1,13 @@
 import logging
 import os
-import calendar
-from typing import Sequence
-import base64
-import json
 import boto3
 from fastapi import HTTPException, UploadFile
 import requests
 from decimal import Decimal
 from botocore.client import Config
 from api.routers.logging import LoggingManager
-# from aws_xray_sdk.core import xray_recorder
 
-from api.utils.aws import get_secret
+from api.utils.commons import get_secret
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +17,7 @@ ENV_SECRET_ARN = "arn:aws:secretsmanager:eu-west-1:435772683141:secret:orchestra
 REGION = os.getenv('AWS_DEFAULT_REGION')
 
 
-EXTENSION = 'jpeg'
+EXTENSION = 'png'
 
 class S3Bucket():
     def __init__(self):
@@ -36,7 +31,7 @@ class S3Bucket():
         try:
             # content_type = image.content_type # REVISAR
             extension = content_type.split("/")[1]
-            key = f"{image_prefix}{str(image_id)}.{extension}"
+            key = f"{image_prefix}-images/{str(image_id)}.{extension}"
             self.s3.upload_fileobj(image, self.BUCKET_NAME, key)
         
         except Exception as error:
@@ -65,17 +60,22 @@ class S3Bucket():
         self.s3.delete_object(Bucket=self.BUCKET_NAME, Key=source['Key'])
         return True
     
-    def presigned_url(self, img_id: str,image_prefix: str, extension: str=EXTENSION):
-        file_name = img_id + '.' + extension if extension else img_id
+    def presigned_url(self, logger: LoggingManager, image_id: str,image_prefix: str, extension: str=EXTENSION):
+        logger.info(f"Generating presigned URL for image...")
+        file_name = image_id + '.' + extension if extension else image_id
         url_get = self.s3v4.generate_presigned_url('get_object',
                                             Params={'Bucket': self.BUCKET_NAME, 'Key': image_prefix + file_name},
                                             ExpiresIn= 3600)
+        logger.info(f"Presigned URL generated successfully.")
         return url_get
     
-    def get_image(self, url):
-        response = requests.get(url)
-
+    def get_image(self, logger: LoggingManager, image_url: str)-> requests.Response:
+        logger.info(f"Downloading image from S3 bucket...")
+        response = requests.get(image_url)
+        logger.info(f"HTTP Response Code: {response.status_code}")
+        
         if response.status_code != 200:
-            raise HTTPException(f"Error downloading Image From S3")
+            raise HTTPException(status_code=400, detail="Error downloading Image From S3")
+        logger.info(f"Image downloaded successfully from S3 bucket.")
         
         return response

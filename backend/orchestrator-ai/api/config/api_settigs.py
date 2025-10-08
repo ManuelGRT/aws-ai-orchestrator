@@ -8,7 +8,7 @@ class APISettings(BaseSettings):
     """
     Contains all global variables.
     """
-    app_name: str = "Verificacion Digital de Autos"
+    app_name: str = "Orchestrator AI"
     app_name_underscore: str = app_name.replace(' ', '_')
     app_name_identifier: str = "orchestrator ai"
     app_description: str = "Orquestador de modelos de inteligencia artificial"
