@@ -17,7 +17,7 @@ router = APIRouter()
 @router.post("/analyze-image",
              responses=utils_commons.RESPONSES,
              name="Model Image")
-async def denoise_image(
+async def model_image(
                 background_tasks: BackgroundTasks,
                 request: Request,
                 image_id: str = Form(..., description='Part of the vehicles', example='ai service name'), 
@@ -67,30 +67,3 @@ async def denoise_image(
             headers={"response_time": response_time,
                      "image_id": str(image_id)}
         )
-    
-
-
-    
-    
-
-
-'''
-@router.post("/denoise-sigma")
-async def denoise_sigma(
-    file: UploadFile = File(...),
-    sigma: float = Query(25.0, ge=0.0, le=255.0, description="σ AWGN (0..255)")
-):
-    try:
-        img = Image.open(io.BytesIO(await file.read())).convert("RGB")
-    except Exception:
-        raise HTTPException(400, "No se pudo abrir la imagen.")
-    x = to_tensor(img).unsqueeze(0).to(DEVICE)        # [0,1]
-    sigma_norm = float(sigma) / 255.0
-
-    with torch.no_grad():
-        y = DENOISER(x, sigma=sigma_norm).clamp(0, 1)
-
-    buf = io.BytesIO()
-    to_pil(y.squeeze(0).cpu()).save(buf, format="PNG"); buf.seek(0)
-    return StreamingResponse(buf, media_type="image/png")
-'''
