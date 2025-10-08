@@ -307,10 +307,10 @@ resource "aws_ecs_service" "modelAi2_api_ecs_service" {
 
     service {
       port_name = "http"
-      discovery_name = "modelai2-api"
+      discovery_name = "denoising-ai-api"
       client_alias {
         port     = 80
-        dns_name = "modelai2-api"
+        dns_name = "denoising-ai-api"
       }
     }
   }
@@ -382,10 +382,10 @@ resource "aws_ecs_service" "modelAi3_api_ecs_service" {
 
     service {
       port_name = "http"
-      discovery_name = "modelai3-api"
+      discovery_name = "inpainting-ai-api"
       client_alias {
         port     = 80
-        dns_name = "modelai3-api"
+        dns_name = "inpainting-ai-api"
       }
     }
   }

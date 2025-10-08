@@ -1,0 +1,196 @@
+{
+	"info": {
+		"_postman_id": "b016d0ad-034d-473d-b419-385dc385bd53",
+		"name": "collection_orchestrator_api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "47239883",
+		"_collection_link": "https://manug-ramireztirado-5996805.postman.co/workspace/manuel-Gonzalo-Ram%C3%ADrez's-Worksp~1757f837-479f-46ab-83b8-fe53de3e66b6/collection/47239883-b016d0ad-034d-473d-b419-385dc385bd53?action=share&source=collection_link&creator=47239883"
+	},
+	"item": [
+		{
+			"name": "health",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://ts5qfbdl7j.execute-api.eu-west-1.amazonaws.com/v1/health",
+					"protocol": "https",
+					"host": [
+						"ts5qfbdl7j",
+						"execute-api",
+						"eu-west-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"v1",
+						"health"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "authorize",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://ts5qfbdl7j.execute-api.eu-west-1.amazonaws.com/v1/authorize",
+					"protocol": "https",
+					"host": [
+						"ts5qfbdl7j",
+						"execute-api",
+						"eu-west-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"v1",
+						"authorize"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "orchestrator_denoising",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJraWQiOiJYR09vSlRFRWFhejQ5V29TNmR0dFU1OUdlXC9FZ0Y1NzhcL2E2ZTNCTnlVSG89IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJhMmQ1YTRkNC03MDAxLTcwMWUtZTkwYS04Yzk1MDBiMGNiOWYiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMS5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTFfZHJqbU1YUnRLIiwiY29nbml0bzp1c2VybmFtZSI6ImZha2V1c2VyIiwib3JpZ2luX2p0aSI6ImQ5YTQwZTM3LTU1YmEtNDk4YS1iMThkLWM2OGRjMDk2ZDIwZiIsImF1ZCI6InZnbjRsa2w5MGJvdDBwdG01OGRyN3RhbnUiLCJldmVudF9pZCI6IjgxNWE4NjU1LWFiY2MtNGM3MS04MGFjLWZhMjRiYTY4MzhlYiIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNzU5NDM5NTcyLCJleHAiOjE3NTk0NDMxNzIsImlhdCI6MTc1OTQzOTU3MiwianRpIjoiNGYwNDNhNTUtMjk1NS00MTJmLTllZDktYjIwZDY4Y2U5MGZkIiwiZW1haWwiOiJmYWtldXNlckBleGFtcGxlLmNvbSJ9.Sd9YapE_13ky7rozLDlx56kxfegTDbhNpyt9cwGptp8_xAtDhqVXzJBk5GrURe87QG-Isp4sLz0_EVcxhNCBExBDfEBeLZkAS5oi1EGjoofAtJ50ZrNI6v8xHkKCtYZtMkwHYMoySRUTiSfQ7Od2ZODJo6k5V2aU8KJbhHw9ct8q2U0vBCh9mHBT51JsTUaqiXupiawCOwIEYBet18A3A_HfXokTzw5s9yDhdn1Qfe7SiXBVIVCEWpdpvuPjRG2ktkObDWQyIvJdR6PXRbVBoliZ9DZlvVpl9SsTPNcZzRlFjMtlI3VDDhNCZSE_dCB3yP4tXokEvvEDsdzFlwWkAw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "service_name",
+							"value": "denoising-ai",
+							"type": "text"
+						},
+						{
+							"key": "image_file",
+							"type": "file",
+							"src": "/C:/Users/34649/Documents/TFG_Informatica/aws-ai-orchestrator/images/image_denoising_1.png"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://ts5qfbdl7j.execute-api.eu-west-1.amazonaws.com/v1/image-ai-analysis",
+					"protocol": "https",
+					"host": [
+						"ts5qfbdl7j",
+						"execute-api",
+						"eu-west-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"v1",
+						"image-ai-analysis"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "orchestrator_inpainting",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJraWQiOiJYR09vSlRFRWFhejQ5V29TNmR0dFU1OUdlXC9FZ0Y1NzhcL2E2ZTNCTnlVSG89IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJhMmQ1YTRkNC03MDAxLTcwMWUtZTkwYS04Yzk1MDBiMGNiOWYiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMS5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTFfZHJqbU1YUnRLIiwiY29nbml0bzp1c2VybmFtZSI6ImZha2V1c2VyIiwib3JpZ2luX2p0aSI6ImQ5YTQwZTM3LTU1YmEtNDk4YS1iMThkLWM2OGRjMDk2ZDIwZiIsImF1ZCI6InZnbjRsa2w5MGJvdDBwdG01OGRyN3RhbnUiLCJldmVudF9pZCI6IjgxNWE4NjU1LWFiY2MtNGM3MS04MGFjLWZhMjRiYTY4MzhlYiIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNzU5NDM5NTcyLCJleHAiOjE3NTk0NDMxNzIsImlhdCI6MTc1OTQzOTU3MiwianRpIjoiNGYwNDNhNTUtMjk1NS00MTJmLTllZDktYjIwZDY4Y2U5MGZkIiwiZW1haWwiOiJmYWtldXNlckBleGFtcGxlLmNvbSJ9.Sd9YapE_13ky7rozLDlx56kxfegTDbhNpyt9cwGptp8_xAtDhqVXzJBk5GrURe87QG-Isp4sLz0_EVcxhNCBExBDfEBeLZkAS5oi1EGjoofAtJ50ZrNI6v8xHkKCtYZtMkwHYMoySRUTiSfQ7Od2ZODJo6k5V2aU8KJbhHw9ct8q2U0vBCh9mHBT51JsTUaqiXupiawCOwIEYBet18A3A_HfXokTzw5s9yDhdn1Qfe7SiXBVIVCEWpdpvuPjRG2ktkObDWQyIvJdR6PXRbVBoliZ9DZlvVpl9SsTPNcZzRlFjMtlI3VDDhNCZSE_dCB3yP4tXokEvvEDsdzFlwWkAw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "service_name",
+							"value": "inpainting-ai",
+							"type": "text"
+						},
+						{
+							"key": "image_file",
+							"type": "file",
+							"src": "/C:/Users/34649/Documents/TFG_Informatica/aws-ai-orchestrator/images/image_inpainting_1.png"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8000/image-ai-analysis",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"image-ai-analysis"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "orchestrator_upscaling",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJraWQiOiJYR09vSlRFRWFhejQ5V29TNmR0dFU1OUdlXC9FZ0Y1NzhcL2E2ZTNCTnlVSG89IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJhMmQ1YTRkNC03MDAxLTcwMWUtZTkwYS04Yzk1MDBiMGNiOWYiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMS5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTFfZHJqbU1YUnRLIiwiY29nbml0bzp1c2VybmFtZSI6ImZha2V1c2VyIiwib3JpZ2luX2p0aSI6ImQ5YTQwZTM3LTU1YmEtNDk4YS1iMThkLWM2OGRjMDk2ZDIwZiIsImF1ZCI6InZnbjRsa2w5MGJvdDBwdG01OGRyN3RhbnUiLCJldmVudF9pZCI6IjgxNWE4NjU1LWFiY2MtNGM3MS04MGFjLWZhMjRiYTY4MzhlYiIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNzU5NDM5NTcyLCJleHAiOjE3NTk0NDMxNzIsImlhdCI6MTc1OTQzOTU3MiwianRpIjoiNGYwNDNhNTUtMjk1NS00MTJmLTllZDktYjIwZDY4Y2U5MGZkIiwiZW1haWwiOiJmYWtldXNlckBleGFtcGxlLmNvbSJ9.Sd9YapE_13ky7rozLDlx56kxfegTDbhNpyt9cwGptp8_xAtDhqVXzJBk5GrURe87QG-Isp4sLz0_EVcxhNCBExBDfEBeLZkAS5oi1EGjoofAtJ50ZrNI6v8xHkKCtYZtMkwHYMoySRUTiSfQ7Od2ZODJo6k5V2aU8KJbhHw9ct8q2U0vBCh9mHBT51JsTUaqiXupiawCOwIEYBet18A3A_HfXokTzw5s9yDhdn1Qfe7SiXBVIVCEWpdpvuPjRG2ktkObDWQyIvJdR6PXRbVBoliZ9DZlvVpl9SsTPNcZzRlFjMtlI3VDDhNCZSE_dCB3yP4tXokEvvEDsdzFlwWkAw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "service_name",
+							"value": "upscaling-ai",
+							"type": "text"
+						},
+						{
+							"key": "image_file",
+							"type": "file",
+							"src": "/C:/Users/34649/Documents/TFG_Informatica/aws-ai-orchestrator/images/image_upscaling_1.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8000/image-ai-analysis",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"image-ai-analysis"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

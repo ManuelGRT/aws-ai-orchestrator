@@ -3,5 +3,5 @@ from pydantic import BaseModel
 from pydantic import Field
 
 
-class StatusOutput(BaseModel):
-    status: str = Field(..., description="API status description", example="UP")
+class HealthOutput(BaseModel):
+    health: str = Field(..., description="API health description", example="UP")

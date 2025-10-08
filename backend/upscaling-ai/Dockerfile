@@ -23,11 +23,9 @@ RUN mkdir -p /root/.ssh && chmod 0700 /root/.ssh && \
 
 RUN mkdir -p ${API_NAME}
 
-# 📦 Install OpenCV headless FIRST - CRITICAL STEP
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir "opencv-python-headless==4.10.0.84"
 
-# 📦 Copy and install requirements
 COPY api/ ./${API_NAME}/api/
 COPY ${REQUIREMENTS_FILE} ./${API_NAME}/
 

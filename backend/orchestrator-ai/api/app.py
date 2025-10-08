@@ -1,13 +1,6 @@
-"""
-File Name: main.py
-@author: Advanced Analytics Spain
-Date: 06/07/2020
-Description: this file is NOT a part of the code, it's just a test call to the model
-"""
 import logging
 
 from fastapi import FastAPI
-from fastapi.exceptions import RequestValidationError
 from fastapi.exceptions import HTTPException
 from fastapi.openapi.utils import get_openapi
 from fastapi.middleware.cors import CORSMiddleware
@@ -17,25 +10,11 @@ from starlette.middleware import Middleware
 from starlette_context import plugins
 from starlette_context.middleware import RawContextMiddleware
 
-# from aws_xray_sdk.core import patch_all
-# from aws_xray_sdk.core import xray_recorder
-
 from api.config.api_settigs import APISettings
-from api.errors import exception_handlers
+from api.config import exception_handlers
 from api.routers.api import api_router
 
 logger = logging.getLogger(__name__)
-
-'''
-xray_recorder.configure(
-    sampling=False,
-    service='public-api',
-    context_missing='LOG_ERROR',
-    plugins=('ECSPlugin',),
-)
-
-patch_all() #enable x-ray auto-instrumentation
-'''
 
 def get_application(settings: APISettings) -> FastAPI:
     """
@@ -60,7 +39,6 @@ def get_application(settings: APISettings) -> FastAPI:
     #, docs_url=None, redoc_url=None
 
     # Add error for exception handlers
-    application.add_exception_handler(RequestValidationError, exception_handlers.validation_exception_handler)
     application.add_exception_handler(Exception, exception_handlers.exception_handler)
     application.add_exception_handler(HTTPException, exception_handlers.http_exception_handler)
 

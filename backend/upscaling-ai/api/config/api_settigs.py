@@ -8,10 +8,10 @@ class APISettings(BaseSettings):
     """
     Contains all global variables.
     """
-    app_name: str = "Verificacion Digital de Autos"
+    app_name: str = "Upscaling AI"
     app_name_underscore: str = app_name.replace(' ', '_')
-    app_name_identifier: str = "orchestrator ai"
-    app_description: str = "Orquestador de modelos de inteligencia artificial"
+    app_name_identifier: str = "upscaling ai"
+    app_description: str = "Artificial Intelligence Upscaling Microservice"
 
     api_current_version: str = "1.0"
     api_credentials_id: str = f"Api{app_name_identifier.capitalize()}CredentialsV1"

@@ -2,7 +2,7 @@ import logging
 import os
 import requests
 import base64
-from api.utils.aws import get_secret
+from api.utils.commons import get_secret
 
 # ENV_SECRET_ARN = os.getenv("ENV_SECRET_ARN")
 ENV_SECRET_ARN = "arn:aws:secretsmanager:eu-west-1:435772683141:secret:orchestrator-ai-api-env-qiCMIU"

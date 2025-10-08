@@ -58,4 +58,4 @@ terraform.rc
 
 # Lambda
 *package/
-#*.zip
+*.zip
