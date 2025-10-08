@@ -56,7 +56,6 @@ Características principales:
 aws-ai-orchestrator/
 
 ├── iac/ # Módulos y configuración de la infraestructura AWS
-
 ├── backend/ # Código fuente de las APIs (FastAPI)
 
 │ ├── orchestrator-ai/
