@@ -1,7 +1,7 @@
 # pylint: disable= too-few-public-methods
 from functools import lru_cache
 
-from pydantic_settings import BaseSettings
+from pydantic import BaseSettings
 
 
 class APISettings(BaseSettings):

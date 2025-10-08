@@ -66,6 +66,6 @@ async def upscale(
         raise HTTPException(
             status_code=status_code,
             detail=detail,
-            headers={"response_time": response_time,
+            headers={"response_time": str(response_time),
                      "image_id": str(image_id)}
         )

@@ -44,12 +44,12 @@ async def exception_handler(request, exc):
                  request_id=request.headers.get("x-request-id", "no-request-id"))
 
     return JSONResponse(
-        status_code=http_internal_server_error_request_code,
         content=ErrorResponse(code=http_internal_server_error_request_code, type=str(type(exc)),
                                        application=APISettings.get_settings().app_name_underscore,
                                        timestamp=f"{datetime.strftime(datetime.now(timezone.utc), TIMESTAMP_EXCEPTION_FORMAT)}",
                                        errors=[errors]
-                                       ).__dict__
+                                       ).dict(),
+        status_code=http_internal_server_error_request_code
     )
 
 
