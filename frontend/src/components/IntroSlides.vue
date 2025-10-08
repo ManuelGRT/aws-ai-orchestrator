@@ -28,13 +28,29 @@
       <button class="nav next" :disabled="index===slides.length-1" @click="next">→</button>
     </div>
 
-    <div class="dots">
-      <span v-for="(s, i) in slides" :key="i" class="dot" :class="{active: i===index}" @click="go(i)"></span>
+    <!-- Footer fijo -->
+    <div class="footer">
+      <!-- Botón solo visible en la última slide -->
+      <button
+        v-if="index === slides.length - 1"
+        class="start"
+        @click="$emit('start')"
+      >
+        Empezar
+      </button>
+
+      <!-- Los dots siempre visibles -->
+      <div class="dots">
+        <span
+          v-for="(s, i) in slides"
+          :key="i"
+          class="dot"
+          :class="{active: i===index}"
+          @click="go(i)"
+        ></span>
+      </div>
     </div>
 
-    <button v-if="index===slides.length-1" class="start" @click="$emit('start')">
-      Empezar
-    </button>
   </div>
 </template>
 
@@ -44,16 +60,16 @@ import { ref, onMounted } from 'vue'
 // Rutas de ejemplo; pon una imagen en /public/sample-example.png
 const slides = [
   {
-    title: '1. Selecciona la imagen que quieres analizar',
-    desc: 'Sube una imagen desde tu dispositivo.',
-    img: '/select-from-computer.png',
-    imgClass: 'small-img'
-  },
-  {
-    title: '2. Selecciona el modelo que quieres aplicar',
+    title: '1. Selecciona el modelo que quieres aplicar',
     desc: 'Elige el servicio de IA en el desplegable para procesar tu imagen.',
     img: '/select-model-example.png',
     imgClass: ''
+  },
+  {
+    title: '2. Selecciona la imagen que quieres analizar',
+    desc: 'Sube una imagen desde tu dispositivo.',
+    img: '/select-from-computer.png',
+    imgClass: 'small-img'
   },
   {
     title: '3. ¡Todo listo!',
@@ -104,16 +120,36 @@ onMounted(() => {
 }
 
 .viewport {
-  min-height: 260px;
+  height: 400px;          /* fijo: todas las slides */
   outline: none;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
+  overflow: hidden;
 }
 
-.slide { width: 100%; }
-.slide-content { padding: 0.5rem 0.75rem; }
+.slide {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slide-content {
+  max-height: 100%;       /* 👈 evita que crezca más que el viewport */
+  overflow: hidden;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* 👈 alinea arriba */
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  text-align: center;
+  box-sizing: border-box;
+}
 
 .title { font-size: 1.25rem; margin-bottom: 0.5rem; }
 .desc  { opacity: 0.9; margin-bottom: 0.75rem; }
@@ -135,21 +171,41 @@ onMounted(() => {
 }
 .nav:disabled { opacity: 0.35; cursor: not-allowed; }
 
-.dots { margin-top: 0.75rem; }
+.footer {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;   /* organiza en columna */
+  align-items: center;
+  gap: 0.75rem;             /* espacio entre botón y dots */
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+}
+
 .dot {
-  display: inline-block; width: 10px; height: 10px;
+  display: inline-block;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: rgba(255,255,255,0.35);
-  margin: 0 6px; cursor: pointer;
+  margin: 0 6px;
+  cursor: pointer;
 }
-.dot.active { background: #fff; }
+.dot.active {
+  background: #fff;
+}
 
 .start {
-  margin-top: 1rem;
   padding: 0.9rem 1.6rem;
-  border: none; border-radius: 12px;
-  background: #10b981; color: #fff;
-  cursor: pointer; font-size: 1.05rem;
+  border: none;
+  border-radius: 12px;
+  background: #10b981;
+  color: #fff;
+  cursor: pointer;
+  font-size: 1.05rem;
+  font-weight: bold;
   box-shadow: 0 6px 16px rgba(0,0,0,0.2);
 }
 

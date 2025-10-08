@@ -1,0 +1,2 @@
+# TODO: INSERT YOUR REQUIREMENTS HERE
+# Example:  fastapi==0.95.2

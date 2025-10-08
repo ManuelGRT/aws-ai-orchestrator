@@ -1,5 +1,8 @@
-from datetime import datetime
 from api.schemas.errors import ErrorResponse
+
+import json
+import boto3
+from aws_secretsmanager_caching import SecretCache, SecretCacheConfig
 
 RESPONSES = {
     400: {'model': ErrorResponse},
@@ -8,21 +11,17 @@ RESPONSES = {
     500: {'model': ErrorResponse}
 }
 
+def get_secret(secret_name):
+    """
+    Returns a secret stored in SecretsManager.
+    :return: Secret value
+    """
+    session = boto3.session.Session()
+    client = session.client(
+        service_name='secretsmanager'
+    )
 
-class ObjectToDictConverter:
-    @staticmethod
-    def to_dict(obj):
-        if isinstance(obj, (int, float, bool, str, type(None))):
-            return obj
-        elif isinstance(obj, datetime):
-            return obj.isoformat()
-        elif isinstance(obj, list):
-            return [ObjectToDictConverter.to_dict(item) for item in obj]
-        elif isinstance(obj, dict):
-            return {key: ObjectToDictConverter.to_dict(value) for key, value in obj.items()}
-        elif hasattr(obj, '__dict__'):
-            obj_dict = {key: ObjectToDictConverter.to_dict(value) for key, value in obj.__dict__.items() if
-                        not key.startswith("_")}
-            return obj_dict
-        else:
-            return None
+    cache = SecretCache(config=SecretCacheConfig(), client=client)
+    secret = json.loads(cache.get_secret_string(secret_name))
+
+    return secret

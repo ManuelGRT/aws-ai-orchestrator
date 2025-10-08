@@ -7,8 +7,21 @@
       <label class="form-label">Selecciona un modelo:</label>
       <select v-model="selectedModel" class="input-select">
         <option disabled value="">Selecciona un modelo</option>
-        <option v-for="model in models" :key="model" :value="model">{{ model }}</option>
+        <option v-for="m in models" :key="m.id" :value="m.id">
+          {{ m.label }}
+        </option>
       </select>
+
+      <!-- Descripción + ejemplo -->
+      <div v-if="selectedModel" class="model-info">
+        <p>{{ models.find(m => m.id === selectedModel)?.desc }}</p>
+        <img
+          v-if="models.find(m => m.id === selectedModel)?.example"
+          :src="models.find(m => m.id === selectedModel)?.example"
+          alt="Ejemplo del modelo"
+          class="example-img"
+        />
+      </div>
     </div>
 
     <!-- Grupo: archivo -->
@@ -21,6 +34,12 @@
       </label>
 
       <span v-if="selectedFileName" class="file-name">{{ selectedFileName }}</span>
+
+      <!-- 👇 Previsualización de la imagen original -->
+      <div v-if="originalPreviewUrl" class="preview-block">
+        <h3 class="card-title">Vista previa</h3>
+        <img :src="originalPreviewUrl" alt="Vista previa de la imagen" class="preview-img" />
+      </div>
     </div>
 
     <!-- Botón de análisis -->
@@ -30,10 +49,16 @@
 
     <p v-if="error" class="error">{{ error }}</p>
 
+    <!-- Spinner de espera -->
+    <div v-if="waitingResult" class="spinner">
+      <div class="loader"></div>
+      <p>Procesando tu imagen, por favor espera...</p>
+    </div>
+
     <!-- Resultados -->
     <div class="results-area">
       <div v-if="resultUrl" class="compare">
-        <!-- ORIGINAL: se expande si es horizontal -->
+        <!-- ORIGINAL -->
         <div class="card" :class="{ 'wide-card': isHorizontal }">
           <h3 class="card-title">Original</h3>
           <div class="card-body">
@@ -62,19 +87,41 @@
   </div>
 </template>
 
+
 <script setup>
 import { ref, computed, onBeforeUnmount } from 'vue'
 import axios from 'axios'
 
-const models = ['Modelo A', 'Modelo B', 'Modelo C'] // ajusta a tus servicios reales
+const models = [
+  {
+    id: 'upscaling-ai',
+    label: 'Upscaling Model',
+    desc: 'Aumenta la resolución de la imagen preservando el detalle.',
+    example: '' // /examples/upscaling.png
+  },
+  {
+    id: 'denoising-ai',
+    label: 'Denoising Model',
+    desc: 'Elimina el ruido de la imagen para obtener un resultado más limpio.',
+    example: '' // /examples/denoising.png
+  },
+  {
+    id: 'inpainting-ai',
+    label: 'Inpainting Model',
+    desc: 'Rellena o reconstruye partes de la imagen donde aparece un texto.',
+    example: '' // /examples/inpainting.png
+  }
+]
+
 const selectedModel = ref('')
 const selectedFile = ref(null)
 const selectedFileName = ref('')
 const originalPreviewUrl = ref(null)
 const resultUrl = ref(null)
-const isHorizontal = ref(false)   // <-- detecta si la imagen original es apaisada
+const isHorizontal = ref(false)
 const loading = ref(false)
 const error = ref('')
+const waitingResult = ref(false)
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://ts5qfbdl7j.execute-api.eu-west-1.amazonaws.com/v1'
 const AUTHORIZE_PATH = import.meta.env.VITE_AUTHORIZE_PATH || '/authorize/'
@@ -93,18 +140,15 @@ const onFileChange = (e) => {
   selectedFile.value = file
   selectedFileName.value = file.name
 
-  // Preview de original
   revoke(originalPreviewUrl.value)
   originalPreviewUrl.value = URL.createObjectURL(file)
 
-  // Detecta orientación (horizontal vs vertical)
   const img = new Image()
   img.onload = () => {
     isHorizontal.value = img.width > img.height
   }
   img.src = originalPreviewUrl.value
 
-  // Reset de resultado si se cambia la imagen
   if (resultUrl.value) {
     revoke(resultUrl.value)
     resultUrl.value = null
@@ -133,14 +177,14 @@ async function getIdToken () {
 
 async function postAnalysis () {
   const formData = new FormData()
-  formData.append('service_name', selectedModel.value) // backend espera este nombre
-  formData.append('image_file', selectedFile.value)    // backend espera este nombre
+  formData.append('service_name', selectedModel.value)
+  formData.append('image_file', selectedFile.value)
 
   const token = await getIdToken()
 
   return axios.post(`${API_BASE}${ANALYSIS_PATH}`, formData, {
     headers: { Authorization: `Bearer ${token}` },
-    responseType: 'blob',
+    responseType: 'json',
   })
 }
 
@@ -148,52 +192,82 @@ const analyzeImage = async () => {
   error.value = ''
   if (!canSubmit.value) return
   loading.value = true
+  waitingResult.value = false
 
   try {
     const response = await postAnalysis()
-    const mime = response.headers?.['content-type'] || 'image/png'
-    revoke(resultUrl.value)
-    resultUrl.value = URL.createObjectURL(new Blob([response.data], { type: mime }))
-  } catch (err) {
-    const status = err?.response?.status
-    if (status === 401 || status === 403) {
-      try {
-        idToken = null
-        await getIdToken()
-        const response = await postAnalysis()
-        const mime = response.headers?.['content-type'] || 'image/png'
-        revoke(resultUrl.value)
-        resultUrl.value = URL.createObjectURL(new Blob([response.data], { type: mime }))
-      } catch (err2) {
-        console.error('Error en análisis (reintento):', err2)
-        error.value = 'No se pudo completar el análisis tras renovar el token.'
-      }
+    const { success, image_id } = response.data
+
+    if (success && image_id) {
+      waitingResult.value = true
+      startPolling(selectedModel.value, image_id)
     } else {
-      console.error('Error en análisis:', err)
-      error.value = 'Hubo un error al analizar la imagen.'
+      throw new Error('Respuesta inesperada del backend')
     }
-  } finally {
+  } catch (err) {
+    console.error('Error en análisis:', err)
+    error.value = 'Hubo un error al iniciar el análisis.'
     loading.value = false
+    waitingResult.value = false
   }
+}
+
+let pollInterval = null
+
+function startPolling(serviceName, imageId) {
+  if (pollInterval) clearInterval(pollInterval)
+
+  let attempts = 0
+  pollInterval = setInterval(async () => {
+    attempts++
+    if (attempts > 60) { // 60 intentos = 5 minutos
+      clearInterval(pollInterval)
+      pollInterval = null
+      loading.value = false
+      waitingResult.value = false
+      error.value = 'El procesamiento ha tardado demasiado. Intenta de nuevo.'
+      return
+    }
+
+    try {
+      const token = await getIdToken()
+      const res = await axios.get(`${API_BASE}/images/${serviceName}/${imageId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+        responseType: 'blob'
+      })
+
+      if (res.status === 200 && res.data) {
+        const mime = res.headers?.['content-type'] || 'image/png'
+        revoke(resultUrl.value)
+        resultUrl.value = URL.createObjectURL(new Blob([res.data], { type: mime }))
+
+        clearInterval(pollInterval)
+        pollInterval = null
+        loading.value = false
+        waitingResult.value = false
+      }
+    } catch (err) {
+      console.log(`Intento ${attempts}: imagen aún no lista...`)
+    }
+  }, 5000)
 }
 
 onBeforeUnmount(() => {
   revoke(originalPreviewUrl.value)
   revoke(resultUrl.value)
+  if (pollInterval) clearInterval(pollInterval)
 })
 </script>
 
 <style scoped>
-/* Arial en negrita en todo el componente */
 :host, .container, .container * {
   font-family: Arial, Helvetica, sans-serif;
   font-weight: 700;
 }
 
-/* Panel general, ahora más ANCHO para favorecer horizontales */
 .container {
   width: 100%;
-  max-width: 1400px;         /* <<< más ancho del panel */
+  max-width: 1400px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
@@ -205,11 +279,9 @@ onBeforeUnmount(() => {
   min-height: 78vh;
 }
 
-/* Formulario con separación cómoda */
 .form-group { margin: 1.25rem 0 1.6rem; }
 .form-label { display: block; margin-bottom: 0.6rem; }
 
-/* SELECT oscuro y legible */
 .input-select {
   appearance: none;
   width: 100%;
@@ -219,22 +291,9 @@ onBeforeUnmount(() => {
   background-color: rgba(15,32,60,0.85);
   color: #fff;
   outline: none;
-  background-image: linear-gradient(45deg, transparent 50%, #ffffff 50%),
-                    linear-gradient(135deg, #ffffff 50%, transparent 50%),
-                    linear-gradient(to right, transparent, transparent);
-  background-position: calc(100% - 20px) calc(50% - 4px),
-                       calc(100% - 15px) calc(50% - 4px),
-                       calc(100% - 2.5rem) 0.6rem;
-  background-size: 5px 5px, 5px 5px, 1px 1.6rem;
-  background-repeat: no-repeat;
-}
-.input-select:focus {
-  border-color: rgba(255,255,255,0.55);
-  box-shadow: 0 0 0 3px rgba(255,255,255,0.15);
 }
 .input-select option { background: #020824; color: #fff; }
 
-/* Botón de archivo visual */
 .file-btn {
   display: inline-flex;
   align-items: center;
@@ -245,22 +304,10 @@ onBeforeUnmount(() => {
   color: #00111f;
   cursor: pointer;
   box-shadow: 0 6px 16px rgba(0,0,0,0.2);
-  transition: background .2s ease, transform .05s ease;
-  user-select: none;
 }
-.file-btn:hover { background: #0284c7; }
-.file-btn:active { transform: translateY(1px); }
 .file-btn input[type="file"] { display: none; }
 .file-btn-text { pointer-events: none; }
 
-.file-name {
-  display: inline-block;
-  margin-left: 0.75rem;
-  opacity: 0.9;
-  word-break: break-all;
-}
-
-/* Botones principales */
 .btn-primary, .btn-secondary {
   display: inline-block;
   padding: 1rem 1.7rem;
@@ -269,36 +316,19 @@ onBeforeUnmount(() => {
   border-radius: 12px;
   cursor: pointer;
   margin-top: 1.1rem;
-  transition: transform .05s ease, box-shadow .2s ease, background .2s ease;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
 }
 .btn-primary { background-color: #2563eb; color: #fff; }
-.btn-primary:hover:enabled { background-color: #1d4ed8; }
-.btn-primary:active:enabled { transform: translateY(1px); }
-
 .btn-secondary { background-color: #10b981; color: #fff; margin-top: 0.9rem; }
-.btn-secondary:hover:enabled { background-color: #059669; }
-.btn-secondary:active:enabled { transform: translateY(1px); }
-
-button:disabled { background-color: #6b7280; cursor: not-allowed; box-shadow: none; }
 
 .error { margin-top: 1rem; color: #ffd2d2; }
 
-/* Resultados con altura reservada para evitar saltos */
 .results-area { margin-top: 1.5rem; min-height: 480px; }
-
-/* Grid comparativa: 2 columnas por defecto */
 .compare {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.25rem;
   align-items: start;
 }
-
-/* Placeholder invisible con mismo tamaño para evitar rebotes */
-.placeholder-block .card { min-height: 360px; opacity: 0; }
-
-/* Tarjetas */
 .card {
   background: rgba(0,0,0,0.25);
   border: 1px solid rgba(255,255,255,0.15);
@@ -310,33 +340,39 @@ button:disabled { background-color: #6b7280; cursor: not-allowed; box-shadow: no
   flex-direction: column;
   justify-content: center;
 }
-.card-title { margin: 0 0 0.75rem 0; font-size: 1.15rem; }
-.card-body { display: flex; flex-direction: column; align-items: center; }
-
-/* Imagenes: más grandes; horizontales aprovecharán más ancho con wide-card */
 .img {
   max-width: 100%;
-  max-height: 420px;         /* más alto para que horizontales se vean grandes */
+  max-height: 420px;
   object-fit: contain;
   border-radius: 10px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.3);
 }
 
-/* Cuando la original es horizontal, expandimos la tarjeta a 2 columnas */
-.wide-card { grid-column: span 2; }
-.wide-card .img { max-height: 520px; }  /* permite aún más altura en horizontales */
-.compare .wide-card + .card { margin-top: 1rem; }
+.model-info {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  text-align: center;
+}
+.model-info p { margin-bottom: 0.75rem; font-size: 0.95rem; color: #e5e7eb; }
 
-/* Responsive */
-@media (max-width: 1200px) {
-  .container { max-width: 96vw; }
-  .img { max-height: 380px; }
-  .wide-card .img { max-height: 460px; }
+.preview-block { margin-top: 1rem; text-align: center; }
+.preview-img {
+  max-width: 320px;
+  max-height: 220px;
+  border-radius: 10px;
 }
-@media (max-width: 900px) {
-  .results-area { min-height: 540px; }
-  .compare { grid-template-columns: 1fr; }
-  .wide-card { grid-column: span 1; } /* en móvil vuelve a una columna */
-  .img { max-height: 360px; }
+
+.spinner { margin-top: 1.5rem; text-align: center; }
+.loader {
+  border: 6px solid rgba(255,255,255,0.2);
+  border-top: 6px solid #0ea5e9;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 1rem auto;
+  animation: spin 1s linear infinite;
 }
+@keyframes spin { to { transform: rotate(360deg); } }
 </style>

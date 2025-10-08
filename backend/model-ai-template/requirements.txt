@@ -1,0 +1,2 @@
+# TODO: INSERT YOUR LIBRARY REQUIREMENTS
+# Example:  fastapi==0.95.2

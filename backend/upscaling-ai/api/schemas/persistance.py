@@ -2,12 +2,12 @@ from datetime import datetime
 from pydantic import BaseModel
 from typing import List, Optional, Union
 
-class OrchestratorApiPersistance(BaseModel):
+class UpsaclingApiPersistance(BaseModel):
     """
     Data structure used to persist AI evaluation results for observability and monitoring.
 
     This model is primarily used for logging and storing granular evaluation data from
-    each microservice involved in this orchestrator.
+    each microservice involved in this ai model.
 
     Attributes:
         request_id (Optional[str]): Unique identifier for the specific request instance.
