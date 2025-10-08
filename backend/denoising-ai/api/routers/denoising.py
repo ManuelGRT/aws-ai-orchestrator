@@ -27,6 +27,7 @@ async def denoise_image(
     logger = LoggingManager(context.get(header_keys.HeaderKeys.request_id),image_id)
     try:
         logger.info(f"Starting denoising process...")
+        logger.info(f"image_file type: {type(image_file)}")
         init_time = time.time()
         response = await denoising_service.denoise_image(image_file=image_file, logger=logger)
         logger.info(f"Finishing denoising process...")
@@ -62,8 +63,10 @@ async def denoise_image(
         raise HTTPException(
             status_code=status_code,
             detail=detail,
-            headers={"response_time": response_time,
-                     "image_id": str(image_id)}
+            headers={
+                "response_time": str(response_time),
+                "image_id": str(image_id)
+            }
         )
     
 

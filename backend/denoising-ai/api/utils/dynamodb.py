@@ -16,7 +16,7 @@ class DynamoDB:
         self.DYNAMODB_TABLE = "orchestrator-ai-api-info"  # Replace with your actual table name
 
         # AWS Clients
-        self.db    = boto3.resource('dynamodb')
+        self.db    = boto3.resource('dynamodb', region_name="eu-west-1")
         self.table = self.db.Table(self.DYNAMODB_TABLE)
 
     def upload_api_persistance(self, data_api: DenoisingApiPersistance, logger: LoggingManager):

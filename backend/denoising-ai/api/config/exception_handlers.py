@@ -61,7 +61,8 @@ async def http_exception_handler(request: Request, exc: HTTPException):
     http_error_request_string = exc.detail
 
     errors = ErrorResponseErrors(code=str(http_error_request_code),
-                                          message=http_error_request_string)
+                                          message=http_error_request_string,
+                                          rootCause="")
     log_level = "warning"
     str_traceback = traceback.format_exc()
     logger.warning(http_error_request_string,

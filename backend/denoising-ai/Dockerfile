@@ -1,6 +1,6 @@
 FROM tiangolo/uvicorn-gunicorn:python3.10
 
-ARG API_NAME=upscaling-ai
+ARG API_NAME=denoising-ai
 ARG WORK_DIR=/opt/apis
 ARG REQUIREMENTS_FILE=requirements.txt
 
@@ -31,11 +31,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
 COPY api/ ./${API_NAME}/api/
 COPY ${REQUIREMENTS_FILE} ./${API_NAME}/
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    libvulkan1 mesa-vulkan-drivers libomp5 ca-certificates \
- && rm -rf /var/lib/apt/lists/*
-
- RUN pip install --no-cache-dir -r ./${API_NAME}/${REQUIREMENTS_FILE}
+RUN pip install --no-cache-dir -r ./${API_NAME}/${REQUIREMENTS_FILE}
 
 EXPOSE 80
 
