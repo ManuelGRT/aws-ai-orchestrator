@@ -1,5 +1,4 @@
 from api.routers.logging import LoggingManager
-import torch
 from lama_cleaner.model_manager import ModelManager
 from api.routers.logging import LoggingManager
 from fastapi import UploadFile, HTTPException
@@ -8,12 +7,12 @@ import io
 import cv2
 import numpy as np
 from PIL import Image
-import torch
 import easyocr
 from lama_cleaner.schema import Config
 
 
-DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+# DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+DEVICE = "cpu"
 reader = easyocr.Reader(['en', 'es'], gpu=(DEVICE == "cuda"))
 lama = ModelManager(name="lama", device=DEVICE)
 

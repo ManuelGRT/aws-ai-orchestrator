@@ -82,7 +82,7 @@ async def configure_logging() -> None:
 
     formatter = structlog.stdlib.ProcessorFormatter(
         # processor=structlog.processors.JSONRenderer(),  # Used it for JSON log
-        processor=structlog.dev.ConsoleRenderer(),
+        processor=structlog.dev.ConsoleRenderer(colors=False),
         foreign_pre_chain=shared_processors,
     )
 

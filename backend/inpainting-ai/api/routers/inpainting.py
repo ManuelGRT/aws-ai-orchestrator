@@ -1,20 +1,13 @@
-from typing import Optional
-from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, HTTPException, Request, UploadFile
+from fastapi import APIRouter, BackgroundTasks, File, Form, HTTPException, Request, UploadFile
 from api.utils import commons as utils_commons
 import logging
 from api.routers.logging import LoggingManager
 
 from fastapi import APIRouter, File, UploadFile, HTTPException
-from fastapi.responses import StreamingResponse
 from starlette_context import context, header_keys
 
 from api.utils import inpainting_service
 from api.schemas.persistance import InpantingApiPersistance
-import io
-import cv2
-import numpy as np
-from PIL import Image
-import torch
 
 from api.utils.dynamodb import DynamoDB
 from datetime import datetime
@@ -75,7 +68,7 @@ async def inpaint_image(
         raise HTTPException(
             status_code=status_code,
             detail=detail,
-            headers={"response_time": response_time,
+            headers={"response_time": str(response_time),
                      "image_id": str(image_id)}
         )
 
