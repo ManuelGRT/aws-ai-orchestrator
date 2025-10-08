@@ -51,17 +51,3 @@ Características principales:
 - Autenticación automática a través del endpoint `/authorize`, que obtiene el token JWT de **Cognito** para cada sesión.
 
 ---
-
-## 🧩 Estructura del Proyecto
-aws-ai-orchestrator/
-
-├── iac/ # Módulos y configuración de la infraestructura AWS
-├── backend/ # Código fuente de las APIs (FastAPI)
-
-│ ├── orchestrator-ai/
-│ ├── upscaling-ai/
-│ ├── denoising-ai/
-│ └── inpainting-ai/
-│ └── model-ai-template/
-├── frontend/ # Aplicación Vue.js
-└── README.md
