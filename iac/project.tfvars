@@ -46,19 +46,19 @@ orchestrator_ecs_service_name = "orchestrator-ai-api"
 ## MODEL AI 1 ECS ##
 modelAi1_ecs_task_definition_name = "task-upscaling-ai-api"
 modelAi1_ecs_task_cpu = 2048
-modelAi1_ecs_task_memory = 4096
+modelAi1_ecs_task_memory = 6144
 modelAi1_ecs_service_name = "upscaling-ai-api"
 
 ## MODEL AI 2 ECS ##
 modelAi2_ecs_task_definition_name = "task-denoising-ai-api"
-modelAi2_ecs_task_cpu = 256
-modelAi2_ecs_task_memory = 1024
+modelAi2_ecs_task_cpu = 1024
+modelAi2_ecs_task_memory = 6144
 modelAi2_ecs_service_name = "denoising-ai-api"
 
 ## MODEL AI 3 ECS ##
 modelAi3_ecs_task_definition_name = "task-inpainting-ai-api"
-modelAi3_ecs_task_cpu = 256
-modelAi3_ecs_task_memory = 1024
+modelAi3_ecs_task_cpu = 1024
+modelAi3_ecs_task_memory = 6144
 modelAi3_ecs_service_name = "inpainting-ai-api"
 
 ### WAF ACL ###

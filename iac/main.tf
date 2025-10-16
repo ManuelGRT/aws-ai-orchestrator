@@ -32,7 +32,7 @@ module "cognito" {
 }
 
 module "api-gateway" {
-  source = "./modules/api-gateway"
+  source = "./modules/api_gateway"
 
   nlb_orchestratorAi_arn = module.nlb.nlb_orchestrator_arn
   nlb_orchestratorAi_dns_name = module.nlb.nlb_orchestrator_dns_name

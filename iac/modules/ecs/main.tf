@@ -137,7 +137,7 @@ resource "aws_ecs_service" "orchestrator_api_ecs_service" {
   cluster         = aws_ecs_cluster.cluster.id
   task_definition = aws_ecs_task_definition.orchestratorAi_ecs_task_definition.arn
   desired_count   = 1
-  launch_type     = "FARGATE"
+  launch_type     = "FARGATE" 
 
   network_configuration {
     subnets         = var.subnets
@@ -161,6 +161,11 @@ resource "aws_ecs_service" "orchestrator_api_ecs_service" {
       client_alias {
         port     = 80
         dns_name = "orchestratorai-api"
+      }
+      
+      timeout {
+        idle_timeout_seconds = 600
+        per_request_timeout_seconds = 600
       }
     }
   }
@@ -237,6 +242,11 @@ resource "aws_ecs_service" "modelAi1_api_ecs_service" {
         port     = 80
         dns_name = "upscaling-ai-api"
       }
+
+      timeout {
+        idle_timeout_seconds = 600
+        per_request_timeout_seconds = 600
+      }
     }
   }
 }
@@ -312,6 +322,11 @@ resource "aws_ecs_service" "modelAi2_api_ecs_service" {
         port     = 80
         dns_name = "denoising-ai-api"
       }
+
+      timeout {
+        idle_timeout_seconds = 600
+        per_request_timeout_seconds = 600
+      }
     }
   }
 }
@@ -386,6 +401,11 @@ resource "aws_ecs_service" "modelAi3_api_ecs_service" {
       client_alias {
         port     = 80
         dns_name = "inpainting-ai-api"
+      }
+
+      timeout {
+        idle_timeout_seconds = 600
+        per_request_timeout_seconds = 600
       }
     }
   }
